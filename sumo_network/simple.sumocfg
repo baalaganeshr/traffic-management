@@ -1,0 +1,15 @@
+<configuration>
+    <input>
+        <net-file value="simple.net.xml"/>
+        <route-files value="simple.rou.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="1000"/> <!-- You can increase this to 3600 (1 hour) if needed -->
+    </time>
+
+    <report>
+        <log value="simple.log"/>
+    </report>
+</configuration>

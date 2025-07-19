@@ -1,22 +1,29 @@
-# backend/alert_engine.py
+def generate_alert(row, status=None, city="Delhi"):
+    alert = None
 
-def generate_alert(row, status):
-    """
-    Generate alert if congestion is heavy.
+    if city == "Delhi":
+        if status == "Heavy":
+            alert = {
+                "Time": row.get("Time", ""),
+                "Location": f"X:{row.get('x', 'NA')} / Y:{row.get('y', 'NA')}",
+                "Severity": "High",
+                "Message": "Heavy congestion detected."
+            }
 
-    Args:
-        row (dict): Row from traffic data
-        status (str): Predicted congestion status
+    elif city == "Bangalore":
+        try:
+            congestion = float(row.get("Congestion Level", 0))
+            volume = float(row.get("Traffic Volume", 0))
+        except:
+            congestion = 0
+            volume = 0
 
-    Returns:
-        dict or None: Alert info
-    """
-    if status == "Heavy":
-        return {
-            "timestamp": row['DateTime'],
-            "junction": row['Junction'],
-            "vehicle_count": row['Vehicles'],
-            "status": status,
-            "message": f" Heavy traffic at Junction {row['Junction']}"
-        }
-    return None
+        if congestion > 70 or volume > 1000:  # You can tweak these values
+            alert = {
+                "Time": row.get("Date", ""),
+                "Location": row.get("Area Name", "Unknown"),
+                "Severity": "High" if congestion > 80 else "Medium",
+                "Message": f"Congestion: {congestion}%, Volume: {volume}"
+            }
+
+    return alert
