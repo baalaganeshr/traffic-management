@@ -1,7 +1,10 @@
 # frontend/app_gamified.py
 """
-Advanced Traffic Management System - Gamified Dashboard
-Professional dark-themed interface for traffic signal optimization
+UrbanFlow360 Gamified Dashboard (engine-wired)
+
+Adds a typed, testable implementation that wires the Streamlit page to
+SimulationEngine backends and the HybridController. Provides per-second
+logging, KPI cards, charts, and session CSV export with XP/badges.
 """
 
 import streamlit as st
@@ -14,6 +17,140 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
 import random
+from typing import Optional, Any
+
+# Engine/controller + session store
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from backend.sim_api import SimulationEngine
+from backend.sim_engines.sumo_toy import SumoToy
+try:
+    from backend.sim_engines.neat_adapter import NeatAdapter
+except ImportError:
+    NeatAdapter = None
+from backend.controller_hybrid import HybridController, HybridParams
+from analysis.session_store import SessionStore
+
+
+# -------------------- Minimal engine orchestration (typed) --------------------
+
+def _make_engine(engine_name: str, demand: str, seed: int) -> SimulationEngine:
+    if engine_name == "NEAT":
+        return NeatAdapter()  # type: ignore[return-value]
+    # default toy engine
+    return SumoToy(demand=demand, seed=seed)
+
+
+def _ns_ew_queues(state: dict) -> tuple[int, int]:
+    ns = int(state["approaches"]["North"]["q"]) + int(state["approaches"]["South"]["q"]) if "North" in state["approaches"] else 0
+    ew = int(state["approaches"]["East"]["q"]) + int(state["approaches"]["West"]["q"]) if "East" in state["approaches"] else 0
+    return ns, ew
+
+
+def _since_last_arrival_for_phase(state: dict, cur_phase: int) -> float:
+    # min last_arrival across active approaches as a simple proxy
+    active = state["phases"][cur_phase]
+    vals = [float(state["approaches"][a]["last_arrival"]) for a in active]
+    return float(min(vals) if vals else 0.0)
+
+
+def run_episode(
+    engine: SimulationEngine,
+    controller_mode: str,
+    params: HybridParams,
+    sim_duration_sec: int,
+) -> tuple[list[dict], dict, dict]:
+    """Run a single episode and return (rows, kpis, extras).
+
+    rows: per-second log rows
+    kpis: aggregated KPIs (avg_wait, throughput, total_queue)
+    extras: extra counters like gap_outs
+    """
+    controller = HybridController(params)
+    state = engine.reset()
+    gap_outs = 0
+    rows: list[dict] = []
+
+    fixed_phase = 0
+    t_in_phase = 0
+
+    for _ in range(sim_duration_sec):
+        if controller_mode == "Fixed 40s":
+            # switch every 40s
+            if t_in_phase >= 40:
+                t_in_phase = 0
+                if hasattr(engine, "switch_phase"):
+                    try:
+                        getattr(engine, "switch_phase")()
+                    except Exception:
+                        pass
+                fixed_phase = 1 - fixed_phase
+        else:
+            # Adaptive: decide based on current state
+            cur_phase = int(state["cur_phase"]) if "cur_phase" in state else 0
+            t_in_phase = float(state.get("t_in_phase", 0.0))
+            last_gap = _since_last_arrival_for_phase(state, cur_phase)
+            dec_state = {
+                "phases": state["phases"],
+                "approaches": state["approaches"],
+                "approaches_since_last_arrival": last_gap,
+            }
+            action, target = controller.decide(dec_state, cur_phase, t_in_phase)
+            if action == "HOLD" and t_in_phase >= params.min_green and last_gap < params.gap:
+                gap_outs += 1
+            if action == "SWITCH" and target != cur_phase and hasattr(engine, "switch_phase"):
+                try:
+                    getattr(engine, "switch_phase")()
+                except Exception:
+                    pass
+
+        # step 1s
+        state = engine.step()
+        t_in_phase = float(state.get("t_in_phase", t_in_phase + 1))
+        ns_q, ew_q = _ns_ew_queues(state)
+        served = state.get("served", {"North": 0, "South": 0, "East": 0, "West": 0})
+        row = {
+            "time": int(state.get("time", 0)),
+            "phase": int(state.get("cur_phase", 0)),
+            "ns_queue": ns_q,
+            "ew_queue": ew_q,
+            "ns_served": int(served.get("North", 0) + served.get("South", 0)),
+            "ew_served": int(served.get("East", 0) + served.get("West", 0)),
+        }
+        rows.append(row)
+
+    kpis = engine.metrics()
+    extras = {"gap_outs": gap_outs}
+    return rows, kpis, extras
+
+
+def compute_improvement(curr: dict, baseline: Optional[dict]) -> float:
+    if not baseline:
+        return 0.0
+    base_wait = float(baseline.get("avg_wait", 0.0))
+    curr_wait = float(curr.get("avg_wait", 0.0))
+    if base_wait <= 0:
+        return 0.0
+    return 100.0 * (base_wait - curr_wait) / base_wait
+
+
+def award_badges(extras: dict, kpis: dict, params: HybridParams, improvement_pct: float) -> list[str]:
+    badges: list[str] = []
+    if extras.get("gap_outs", 0) >= 3:
+        badges.append("Gap Master")
+    # Fairness keeper: approximate by no approach max_wait over limit at episode end
+    # This relies on engine state; if not available, skip
+    try:
+        # conservative: treat as keeper if avg_wait below threshold implied by max_wait
+        if float(kpis.get("avg_wait", 0.0)) <= float(params.max_wait):
+            badges.append("Fairness Keeper")
+    except Exception:
+        pass
+    if improvement_pct >= 15.0:
+        badges.append("Flow Guru")
+    return badges
 
 # ====================== ADVANCED STYLING & THEME ======================
 
@@ -1661,6 +1798,147 @@ def main():
     
     # Professional Header with real-time status
     render_professional_header()
+
+    # ---------------- Gamified Spec Runner (Engine-wired) ----------------
+    st.markdown("---")
+    st.subheader("Gamified Simulation (Engine-Wired)")
+
+    if "g_spec_history" not in st.session_state:
+        st.session_state.g_spec_history = []  # list[dict]
+    if "g_spec_baseline" not in st.session_state:
+        st.session_state.g_spec_baseline = None  # type: ignore[assignment]
+    if "g_spec_rows" not in st.session_state:
+        st.session_state.g_spec_rows = pd.DataFrame()
+
+    with st.sidebar:
+        st.markdown("### Gamified Controls")
+        ctrl_mode = st.radio("Controller Mode", ["Fixed 40s", "Adaptive", "NEAT"], index=1)
+        with st.expander("Adaptive Params"):
+            min_green = st.slider("min_green_sec", 5, 40, 7)
+            max_green = st.slider("max_green_sec", 20, 80, 40)
+            gap_time = st.slider("gap_time_sec", 1, 8, 3)
+            max_wait = st.slider("max_wait_sec", 30, 180, 90)
+        with st.expander("Traffic Scenario"):
+            demand = st.selectbox("demand_level", ["Off-peak", "Typical", "Rush"], index=1)
+            sim_duration = st.slider("sim_duration_sec", 30, 600, 90, step=10)
+            seed = st.number_input("random_seed", value=42, step=1)
+            auto_run = st.checkbox("auto_run", value=True)
+            episodes = st.number_input("episodes", min_value=1, value=3, step=1)
+        col_btn1, col_btn2, col_btn3 = st.columns(3)
+        with col_btn1:
+            run_once = st.button("Run Once", use_container_width=True)
+        with col_btn2:
+            reset_btn = st.button("Reset", use_container_width=True)
+        with col_btn3:
+            export_btn = st.button("Export CSV", use_container_width=True)
+
+    params = HybridParams(min_green=min_green, max_green=max_green, gap=gap_time, max_wait=max_wait)
+    store = SessionStore()
+
+    def do_run(n: int) -> None:
+        rows_all: list[pd.DataFrame] = []
+        for ep in range(n):
+            engine = _make_engine("NEAT" if ctrl_mode == "NEAT" else "Toy", demand, int(seed) + ep)
+            rows, kpis, extras = run_episode(engine, ctrl_mode, params, int(sim_duration))
+            if ctrl_mode == "Fixed 40s":
+                st.session_state.g_spec_baseline = kpis
+            improvement = compute_improvement(kpis, st.session_state.g_spec_baseline)
+            badges = award_badges(extras, kpis, params, improvement)
+            df = pd.DataFrame(rows)
+            df["mode"] = ctrl_mode
+            df["episode"] = len(st.session_state.g_spec_history) + 1
+            st.session_state.g_spec_history.append(
+                {
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "mode": ctrl_mode,
+                    "kpis": kpis,
+                    "improvement_pct": improvement,
+                    "badges": badges,
+                }
+            )
+            rows_all.append(df)
+            # persist
+            store.append(
+                df.assign(
+                    demand=demand,
+                    seed=seed,
+                    min_green=min_green,
+                    max_green=max_green,
+                    gap=gap_time,
+                    max_wait=max_wait,
+                ).to_dict("records")
+            )
+        st.session_state.g_spec_rows = pd.concat(rows_all, ignore_index=True) if rows_all else pd.DataFrame()
+
+    if reset_btn:
+        st.session_state.g_spec_history = []
+        st.session_state.g_spec_rows = pd.DataFrame()
+        st.session_state.g_spec_baseline = None
+
+    if run_once or (auto_run and st.session_state.g_spec_rows.empty):
+        do_run(int(episodes if auto_run else 1))
+
+    # KPIs
+    latest_kpis = st.session_state.g_spec_history[-1]["kpis"] if st.session_state.g_spec_history else {}
+    improvement_pct = (
+        st.session_state.g_spec_history[-1]["improvement_pct"] if st.session_state.g_spec_history else 0.0
+    )
+    col_k1, col_k2, col_k3, col_k4 = st.columns(4)
+    with col_k1:
+        st.metric("Avg Wait (s)", f"{latest_kpis.get('avg_wait', 0.0):.1f}")
+    with col_k2:
+        st.metric("Throughput (veh/h)", f"{latest_kpis.get('throughput', 0)}")
+    with col_k3:
+        st.metric("Total Queue", f"{latest_kpis.get('total_queue', 0)}")
+    with col_k4:
+        st.metric("% vs Fixed", f"{improvement_pct:.1f}%")
+
+    # Badges
+    if st.session_state.g_spec_history:
+        badges = st.session_state.g_spec_history[-1]["badges"]
+        st.write("Badges:", ", ".join(badges) if badges else "None yet")
+
+    # Tabs: table, charts, history
+    t1, t2, t3 = st.tabs(["Live Table", "Charts", "History"])
+    with t1:
+        if not st.session_state.g_spec_rows.empty:
+            st.dataframe(st.session_state.g_spec_rows)
+        else:
+            st.info("No simulation data yet.")
+    with t2:
+        if not st.session_state.g_spec_rows.empty:
+            df = st.session_state.g_spec_rows
+            fig1 = px.line(df, x="time", y=["ns_queue", "ew_queue"], title="Queue length over time")
+            st.plotly_chart(fig1, use_container_width=True)
+            if "ns_served" in df and "ew_served" in df:
+                df2 = df.assign(throughput_sec=df["ns_served"] + df["ew_served"])
+                fig2 = px.line(df2, x="time", y="throughput_sec", title="Throughput per second")
+                st.plotly_chart(fig2, use_container_width=True)
+        else:
+            st.info("Run a simulation to see charts.")
+    with t3:
+        if st.session_state.g_spec_history:
+            hist_df = pd.DataFrame(
+                [
+                    {
+                        "timestamp": h["timestamp"],
+                        "mode": h["mode"],
+                        "avg_wait": h["kpis"].get("avg_wait", 0.0),
+                        "throughput": h["kpis"].get("throughput", 0),
+                        "total_queue": h["kpis"].get("total_queue", 0),
+                        "improvement_pct": h.get("improvement_pct", 0.0),
+                        "badges": ", ".join(h.get("badges", [])),
+                    }
+                    for h in st.session_state.g_spec_history
+                ]
+            )
+            st.dataframe(hist_df)
+        else:
+            st.info("No history yet.")
+
+    if export_btn:
+        path = store.export_timestamped(st.session_state.g_spec_rows if not st.session_state.g_spec_rows.empty else None)
+        st.success(f"Exported CSV to {path}")
     
     # Professional Sidebar with enhanced controls
     with st.sidebar:

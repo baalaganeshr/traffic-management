@@ -1027,4 +1027,24 @@ def render_professional_charts(performance_data: List[Dict]):
 
 # Main Application
 if __name__ == "__main__":
-    render_professional_dashboard()
+    # Top-level navigation between Professional and Gamified dashboards
+    try:
+        from frontend import app_gamified as gamified_page  # type: ignore
+    except Exception:
+        gamified_page = None  # Fallback if missing
+
+    tabs = st.tabs(["Professional", "Gamified"])
+    with tabs[0]:
+        render_professional_dashboard()
+
+    with tabs[1]:
+        if gamified_page and hasattr(gamified_page, "main"):
+            # Avoid duplicate page config by temporarily no-op'ing set_page_config
+            _orig_set_cfg = st.set_page_config
+            try:
+                st.set_page_config = lambda *args, **kwargs: None  # type: ignore[assignment]
+                gamified_page.main()
+            finally:
+                st.set_page_config = _orig_set_cfg  # type: ignore[assignment]
+        else:
+            st.info("Gamified page is unavailable.")

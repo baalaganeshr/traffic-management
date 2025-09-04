@@ -1,4 +1,15 @@
-streamlit==1.46.0
-pandas==2.2.3
-numpy
-plotly==6.2.0
+streamlit>=1.46.0
+pandas>=2.2.3
+numpy>=1.26
+plotly>=6.2.0
+scikit-learn>=1.4
+pydeck
+
+# PRIT Integration Dependencies
+pygame>=2.5
+neat-python>=0.92
+
+# Additional packages for enhanced features
+asyncio-mqtt
+dataclasses
+enum34
