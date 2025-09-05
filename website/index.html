@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VIN Traffic System · Vision Intelligence Network Traffic Management System</title>
+    <meta name="description" content="VIN Traffic System (Vision Intelligence Network Traffic Management System) — professional dashboard for real‑time traffic simulation, ML congestion prediction, and smart analytics." />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="container nav__inner">
+        <div class="brand">VIN Traffic System</div>
+        <nav class="nav__links">
+          <a href="#about">About</a>
+          <a href="#features">Features</a>
+          <a href="#demo" class="btn btn--sm">Live Demo</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container">
+          <h1>Vision Intelligence Network<br/>Traffic Management System</h1>
+          <p class="lead">A professional platform for real‑time traffic simulation, ML‑based congestion prediction, and decision support — built on UrbanFlow360.</p>
+          <div class="cta">
+            <a id="demoBtnTop" class="btn btn--lg" target="_blank" rel="noopener">Open Live Demo</a>
+            <a href="#about" class="btn btn--ghost btn--lg">Learn More</a>
+          </div>
+          <div class="path" id="demoPath">Dashboard URL: <code>http://localhost:8512</code></div>
+        </div>
+      </section>
+
+      <section id="about" class="section">
+        <div class="container">
+          <h2>About the Project</h2>
+          <p>
+            VIN Traffic System brings together realistic traffic simulation, machine‑learning prediction, and an operator‑friendly dashboard. It supports multiple Indian cities, highlights congestion hotspots, and provides actionable insights through clear KPIs, charts, and a live map.
+          </p>
+          <ul class="bullets">
+            <li><strong>Professional Dashboard:</strong> Clean, responsive UI with tabs for Monitor, Analytics, Map, and Data.</li>
+            <li><strong>Realtime Simulation:</strong> Streamed samples with auto‑refresh, alerting, and status monitoring.</li>
+            <li><strong>Analytics:</strong> Speed/volume distribution and trends with rolling metrics and summaries.</li>
+            <li><strong>Map View:</strong> City heat overlays by alert level using pydeck/Deck.gl.</li>
+            <li><strong>Exports:</strong> One‑click CSV downloads for reports and offline analysis.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="features" class="section section--alt">
+        <div class="container">
+          <h2>Key Features</h2>
+          <div class="grid">
+            <div class="card"><h3>Realtime</h3><p>Live data collection with configurable refresh interval and status pill.</p></div>
+            <div class="card"><h3>ML Prediction</h3><p>Congestion prediction using scikit‑learn models and alerting rules.</p></div>
+            <div class="card"><h3>Analytics</h3><p>Smart detection of speed or volume across datasets; robust charts.</p></div>
+            <div class="card"><h3>Map</h3><p>City map with colored scatter layers by alert severity and tooltips.</p></div>
+            <div class="card"><h3>Exports</h3><p>CSV download for both live and processed datasets.</p></div>
+            <div class="card"><h3>Dockerized</h3><p>Ready‑to‑run container images for quick demos and deployments.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="demo" class="section">
+        <div class="container">
+          <h2>Try the Dashboard</h2>
+          <p>Click the button below to open the VIN Traffic System dashboard in a new tab.</p>
+          <a id="demoBtnBottom" class="btn btn--lg" target="_blank" rel="noopener">Open Live Demo</a>
+          <p class="hint">Use <code>?dashboard=YOUR_URL</code> to override the target, e.g. <code>index.html?dashboard=https://demo.example.com</code>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div>© <span id="year"></span> VIN Traffic System</div>
+        <div class="muted">Built with Streamlit · UrbanFlow360</div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
+

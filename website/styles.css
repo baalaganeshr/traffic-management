@@ -1,0 +1,35 @@
+:root{
+  --bg:#0f172a; --bg2:#111827; --panel:#1f2937; --muted:#94a3b8; --text:#e5e7eb; --brand:#8b5cf6; --brand2:#6366f1; --accent:#3b82f6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);font:16px/1.5 Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+.nav{position:sticky;top:0;background:rgba(15,23,42,.8);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav__inner{display:flex;align-items:center;justify-content:space-between;min-height:60px}
+.brand{font-weight:700;letter-spacing:.3px}
+.nav__links a{color:var(--text);text-decoration:none;margin-left:16px;opacity:.9}
+.nav__links a:hover{opacity:1}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;box-shadow:0 6px 18px rgba(59,130,246,.25)}
+.btn--ghost{background:transparent;border:1px solid rgba(255,255,255,.15)}
+.btn--lg{padding:12px 20px;font-weight:600}
+.btn--sm{padding:8px 12px;font-size:.95rem}
+.hero{padding:64px 0}
+.hero h1{font-size:42px;line-height:1.15;margin:0 0 8px;background:linear-gradient(90deg,var(--brand2),var(--brand));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .lead{opacity:.9;max-width:780px}
+.hero .cta{margin:18px 0 8px}
+.hero .cta .btn{margin-right:12px}
+.path{margin-top:8px;font-size:.95rem;color:var(--muted)}
+.section{padding:40px 0}
+.section--alt{background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.bullets{margin:12px 0 0 0;padding-left:18px}
+.bullets li{margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:12px}
+.card{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.card h3{margin:2px 0 6px}
+.footer{border-top:1px solid rgba(255,255,255,.06);padding:18px 0;background:rgba(0,0,0,.2)}
+.footer__inner{display:flex;justify-content:space-between;align-items:center}
+.muted{color:var(--muted)}
+code{background:rgba(255,255,255,.06);padding:.2em .4em;border-radius:6px}
+@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.hero h1{font-size:34px}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.nav__links{display:none}}
+
