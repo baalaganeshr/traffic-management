@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VIN Traffic System · Live Demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .demo-shell { padding: 20px 0 0; }
+      .demo-frame { width: 100%; height: calc(100vh - 72px); border: 0; background: transparent; }
+      .crumbs { color: var(--muted); font-size: .95rem; margin: 10px 0 12px; }
+      .crumbs a { color: var(--text); opacity: .9; text-decoration: none; }
+      .crumbs a:hover { opacity: 1; text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="container nav__inner">
+        <div class="brand">VIN Traffic System</div>
+        <nav class="nav__links">
+          <a href="/">Home</a>
+          <a href="/demo" class="btn btn--sm">Live Demo</a>
+        </nav>
+      </div>
+    </header>
+    <main class="demo-shell">
+      <div class="container">
+        <div class="crumbs"><a href="/">Home</a> · Live Demo</div>
+      </div>
+      <iframe id="demoFrame" class="demo-frame" title="VIN Dashboard"></iframe>
+    </main>
+
+    <script>
+      // Same-origin proxied dashboard path with Streamlit embed mode
+      const base = window.location.origin + '/dashboard/';
+      const url = base; // Load full UI; embed mode can be toggled later
+      document.getElementById('demoFrame').src = url;
+    </script>
+  </body>
+  </html>
