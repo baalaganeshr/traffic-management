@@ -14,36 +14,35 @@
         <nav class="nav__links">
           <a href="#about">About</a>
           <a href="#features">Features</a>
-          <a href="#demo" class="btn btn--sm">Live Demo</a>
+          <a href="/dashboard/" class="btn btn--sm">Dashboard</a>
         </nav>
       </div>
     </header>
 
     <main>
+      <div id="glow" aria-hidden="true"></div>
       <section class="hero">
-        <div class="container">
+        <div class="container hero__inner hero--center">
           <h1>Vision Intelligence Network<br/>Traffic Management System</h1>
-          <p class="lead">A professional platform for real‑time traffic simulation, ML‑based congestion prediction, and decision support — built on UrbanFlow360.</p>
+          <p class="lead">Real‑time traffic simulation, AI‑powered congestion alerts, and a streamlined operator dashboard — designed for cities.</p>
           <div class="cta">
-            <a id="demoBtnTop" class="btn btn--lg" target="_blank" rel="noopener">Open Live Demo</a>
+            <a class="btn btn--lg" href="/dashboard/">Open Dashboard</a>
             <a href="#about" class="btn btn--ghost btn--lg">Learn More</a>
           </div>
-          <div class="path" id="demoPath">Dashboard URL: <code>http://localhost:8512</code></div>
         </div>
       </section>
 
       <section id="about" class="section">
         <div class="container">
-          <h2>About the Project</h2>
+          <h2>About VIN</h2>
           <p>
-            VIN Traffic System brings together realistic traffic simulation, machine‑learning prediction, and an operator‑friendly dashboard. It supports multiple Indian cities, highlights congestion hotspots, and provides actionable insights through clear KPIs, charts, and a live map.
+            VIN blends realistic traffic simulation with AI predictions and an operator‑first interface. It highlights hotspots, explains changes clearly, and keeps the experience fast and simple.
           </p>
           <ul class="bullets">
-            <li><strong>Professional Dashboard:</strong> Clean, responsive UI with tabs for Monitor, Analytics, Map, and Data.</li>
-            <li><strong>Realtime Simulation:</strong> Streamed samples with auto‑refresh, alerting, and status monitoring.</li>
-            <li><strong>Analytics:</strong> Speed/volume distribution and trends with rolling metrics and summaries.</li>
-            <li><strong>Map View:</strong> City heat overlays by alert level using pydeck/Deck.gl.</li>
-            <li><strong>Exports:</strong> One‑click CSV downloads for reports and offline analysis.</li>
+            <li><strong>Live Ops:</strong> Monitor flow in real time and act fast.</li>
+            <li><strong>AI Alerts:</strong> Early warnings for congestion and anomalies.</li>
+            <li><strong>Analytics & Maps:</strong> Clear trends, clean charts, and city overlays.</li>
+            <li><strong>Ready to Run:</strong> Dockerized for quick demos and deploys.</li>
           </ul>
         </div>
       </section>
@@ -62,24 +61,16 @@
         </div>
       </section>
 
-      <section id="demo" class="section">
-        <div class="container">
-          <h2>Try the Dashboard</h2>
-          <p>Click the button below to open the VIN Traffic System dashboard in a new tab.</p>
-          <a id="demoBtnBottom" class="btn btn--lg" target="_blank" rel="noopener">Open Live Demo</a>
-          <p class="hint">Use <code>?dashboard=YOUR_URL</code> to override the target, e.g. <code>index.html?dashboard=https://demo.example.com</code>.</p>
-        </div>
-      </section>
+      <!-- Demo preview moved to dedicated /demo page for a cleaner, professional layout. -->
     </main>
 
     <footer class="footer">
       <div class="container footer__inner">
         <div>© <span id="year"></span> VIN Traffic System</div>
-        <div class="muted">Built with Streamlit · UrbanFlow360</div>
+        <div class="muted">Built with Streamlit · VIN</div>
       </div>
     </footer>
 
     <script src="script.js"></script>
   </body>
   </html>
-

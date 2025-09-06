@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  dashboard:
+    build: .
+    container_name: vin-dashboard
+    command: >
+      streamlit run run_professional_improved.py
+      --server.port=8501
+      --server.address=0.0.0.0
+      --server.headless=true
+      --server.baseUrlPath=/dashboard
+      --server.enableXsrfProtection=false
+    expose:
+      - "8501"
+    ports:
+      - "8511:8501"
+
+  website:
+    image: nginx:alpine
+    container_name: vin-website
+    ports:
+      - "80:80"
+    volumes:
+      - ./website:/usr/share/nginx/html:ro
+      - ./website/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - dashboard
