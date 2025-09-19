@@ -1,8 +1,8 @@
 """
-UrbanFlow360 – Improved Professional Dashboard
+UrbanFlow360 - Improved Professional Dashboard
 
 This Streamlit app focuses on a clean, responsive Professional dashboard
-with tabs for Monitor, Analytics, Map and Data. It reuses the project’s
+with tabs for Monitor, Analytics, Map and Data. It reuses the project's
 simulation + prediction utilities while providing a polished UX.
 """
 
@@ -157,71 +157,210 @@ def _plot_trend(series: pd.Series, label: str, window: int = 10, timestamps: pd.
 
 
 def main():
-    st.set_page_config(page_title="VIN – Professional Dashboard",
+    st.set_page_config(page_title="VIN - Professional Dashboard",
                        layout="wide", initial_sidebar_state="expanded")
 
     # Layout + control alignment styles
     st.markdown(
         """
-        <style>
-        :root { --uf-gap: 12px; --uf-radius: 12px; --uf-border: 1px solid rgba(148,163,184,.2); }
-        .main .block-container { max-width: 1180px; margin: 0 auto; padding-top: .75rem; }
-        .stButton > button { width: 100%; height: 44px; border-radius: 10px; }
-        .stButton > button, .stDownloadButton > button {
-            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-            border: 0; color: #fff; font-weight: 700; letter-spacing: .2px;
-            box-shadow: 0 4px 18px rgba(37,99,235,.25); transition: transform .04s ease;
-        }
-        .stButton > button:hover, .stDownloadButton > button:hover { filter: brightness(1.05); }
-        .stButton > button:active, .stDownloadButton > button:active { transform: translateY(1px); }
+<style>
+:root {
+    --uf-gap: 12px;
+    --uf-radius: 12px;
+    --uf-border: 1px solid rgba(148,163,184,.22);
+    --uf-surface: rgba(15,23,42,.5);
+}
+.main .block-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-top: 0.8rem;
+}
+[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(148,163,184,.18);
+    background: rgba(15,23,42,.55);
+}
+[data-testid="stSidebar"] .block-container {
+    padding-top: 1.05rem;
+}
+.stButton > button,
+.stDownloadButton > button {
+    width: 100%;
+    height: 44px;
+    border-radius: 11px;
+    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+    border: 0;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: .2px;
+    box-shadow: 0 8px 24px rgba(37,99,235,.28);
+    transition: transform .05s ease, box-shadow .1s ease;
+}
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(37,99,235,.32);
+}
+.stButton > button:active,
+.stDownloadButton > button:active {
+    transform: translateY(1px);
+}
+.uf-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: linear-gradient(120deg, rgba(59,130,246,.28), rgba(99,102,241,.38));
+    padding: 1.15rem 1.5rem;
+    border-radius: var(--uf-radius);
+    border: 1px solid rgba(148,163,184,.24);
+    margin-bottom: 1.05rem;
+}
+.uf-hero-content {
+    display: grid;
+    gap: 0.4rem;
+}
+.uf-hero-eyebrow {
+    text-transform: uppercase;
+    font-size: 0.74rem;
+    letter-spacing: 0.28em;
+    color: rgba(241,245,249,.7);
+    margin: 0;
+}
+.uf-hero-title {
+    margin: 0;
+    font-size: 1.92rem;
+    color: #fff;
+}
+.uf-hero-lead {
+    margin: 0;
+    color: rgba(241,245,249,.88);
+    font-size: 1rem;
+}
+.uf-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.uf-back-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.5rem 1.05rem;
+    border-radius: 999px;
+    background: rgba(15,23,42,.26);
+    border: 1px solid rgba(191,219,254,.45);
+    color: #eef2ff;
+    font-weight: 600;
+    font-size: 0.93rem;
+    letter-spacing: 0.01em;
+    text-decoration: none !important;
+    box-shadow: 0 14px 28px rgba(15,23,42,.32);
+    backdrop-filter: blur(6px);
+    transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+.uf-back-chip::before {
+    content: '?';
+    font-size: 1rem;
+}
+.uf-back-chip:hover {
+    background: rgba(59,130,246,.3);
+    transform: translateX(-2px);
+    box-shadow: 0 18px 32px rgba(37,99,235,.32);
+    color: #ffffff;
+}
 
-        .uf-status { height: 44px; display: flex; align-items: center; justify-content: center;
-                     border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
-                     background: rgba(255,255,255,0.06); color: #e5e7eb; font-weight: 600; }
-        .uf-caption { margin-bottom: 0.25rem; color: #94a3b8; font-size: 0.85rem; }
-        .uf-status .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-
-        /* Top header with back link */
-        .uf-hero { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-                   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                   padding: 1.0rem 1.25rem; border-radius: var(--uf-radius); margin-bottom: .9rem; }
-        .uf-hero h1 { color: #fff; margin: 0; font-size: 1.75rem; }
-        .uf-hero p { color: rgba(255,255,255,0.95); margin: .25rem 0 0 0; font-size: .95rem; }
-        .uf-hero .spacer { flex: 1; }
-        .uf-link-btn { text-decoration: none; color: #e5e7eb; font-weight: 600; border: 1px solid rgba(255,255,255,0.25);
-                        padding: .5rem .75rem; border-radius: 8px; display: inline-flex; align-items: center; gap: .5rem; }
-        .uf-link-btn:hover { background: rgba(0,0,0,0.12); }
-
-        /* Card + section styling */
-        .uf-card { padding: .75rem 1rem; border: var(--uf-border); border-radius: var(--uf-radius);
-                   background: rgba(15,23,42,.35); }
-        .uf-section-title { font-weight: 700; color: #e2e8f0; margin: 0 0 .25rem 0; }
-        .uf-subtle { color: #94a3b8; font-size: .85rem; }
-
-        /* Tabs + chart polish */
-        .stTabs [data-baseweb=tab-list] { gap: var(--uf-gap); }
-        .stTabs [data-baseweb=tab] { padding: .6rem .8rem; border-radius: 8px; }
-        .stPlotlyChart { border-radius: var(--uf-radius); overflow: hidden; }
-
-        /* Dataframe + metrics */
-        div[data-testid="stDataFrame"] { border-radius: var(--uf-radius); border: var(--uf-border); }
-        div[data-testid="stMetric"] { padding: .6rem .8rem; border-radius: var(--uf-radius); border: var(--uf-border);
-                                       background: rgba(148,163,184,0.08); }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        """
-        <div class='uf-hero'>
-          <div>
-            <h1>VIN – Professional</h1>
-            <p>Real-time monitoring, analytics, map and exports</p>
-          </div>
-          <div class='spacer'></div>
-          <a class='uf-link-btn' href='/'>↩︎ Return</a>
-        </div>
+.uf-actions-shell {
+    background: var(--uf-surface);
+    border: 1px solid rgba(148,163,184,.2);
+    border-radius: var(--uf-radius);
+    padding: 1.05rem 1.2rem;
+    margin-bottom: 1.2rem;
+}
+.uf-actions-shell > div[data-testid="column"] {
+    padding: 0 !important;
+}
+.uf-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+}
+.uf-actions-grid > div[data-testid="column"] {
+    padding: 0 !important;
+}
+.uf-actions-grid > div[data-testid="column"] > div {
+    margin-bottom: 0 !important;
+}
+.uf-status-card {
+    background: rgba(11,19,35,.68);
+    border: 1px solid rgba(148,163,184,.3);
+    border-radius: var(--uf-radius);
+    padding: 1rem 1.05rem;
+    display: grid;
+    gap: 0.4rem;
+}
+.uf-status-card__label {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.74rem;
+    color: rgba(226,232,240,.62);
+}
+.uf-status-card__value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+.uf-status-card__value .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.uf-status-card__meta {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+.uf-card {
+    padding: .8rem 1rem;
+    border: var(--uf-border);
+    border-radius: var(--uf-radius);
+    background: rgba(15,23,42,.55);
+}
+.uf-section-title {
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0 0 .25rem 0;
+}
+.uf-subtle {
+    color: #94a3b8;
+    font-size: .85rem;
+}
+.stTabs [data-baseweb=tab-list] {
+    gap: var(--uf-gap);
+}
+.stTabs [data-baseweb=tab] {
+    padding: .65rem .85rem;
+    border-radius: 9px;
+}
+.stPlotlyChart {
+    border-radius: var(--uf-radius);
+    overflow: hidden;
+}
+div[data-testid="stDataFrame"] {
+    border-radius: var(--uf-radius);
+    border: var(--uf-border);
+}
+div[data-testid="stMetric"] {
+    padding: .6rem .85rem;
+    border-radius: var(--uf-radius);
+    border: var(--uf-border);
+    background: rgba(148,163,184,.09);
+}
+</style>
         """,
         unsafe_allow_html=True,
     )
@@ -233,6 +372,35 @@ def main():
     st.session_state.setdefault("auto_refresh", True)
     st.session_state.setdefault("refresh_seconds", 3)
 
+    data_log = list(st.session_state.get("prof_data_log", []))
+    live_record_count = len(data_log)
+    running = bool(st.session_state.prof_running)
+    auto_refresh_label = 'On' if st.session_state.auto_refresh else 'Off'
+    status_label = 'Running' if running else 'Idle'
+    status_color = '#22c55e' if running else '#f59e0b'
+    last_entry = data_log[-1] if live_record_count else {}
+    last_timestamp = last_entry.get("timestamp") if isinstance(last_entry, dict) else None
+    if isinstance(last_timestamp, datetime):
+        last_ts_display = last_timestamp.strftime('%H:%M:%S')
+    else:
+        last_ts_display = 'N/A'
+
+    hero_html = f"""
+        <div class='uf-hero'>
+          <div class='uf-hero-content'>
+            <p class='uf-hero-eyebrow'>VIN Professional Console</p>
+            <h1 class='uf-hero-title'>Operational insight without leaving the map</h1>
+            <p class='uf-hero-lead'>Monitor live flow, inspect analytics, and export evidence from a single workspace. Configure a city, start streaming, and stay ahead of congestion.</p>
+          </div>
+          <div class='uf-hero-actions'>
+            <a class='uf-back-chip' href='/'>Back to site</a>
+          </div>
+        </div>
+    """
+
+
+    st.markdown(hero_html, unsafe_allow_html=True)
+
     # Sidebar
     with st.sidebar:
         st.header("Configuration")
@@ -241,39 +409,49 @@ def main():
         st.session_state.auto_refresh = st.toggle("Auto refresh", value=st.session_state.auto_refresh)
         st.session_state.refresh_seconds = st.slider("Interval (sec)", 1, 10, st.session_state.refresh_seconds)
 
-    # Controls (equal columns for perfect alignment)
-    c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
-    with c1:
-        if st.button("Start", type="primary", use_container_width=True, disabled=st.session_state.prof_running):
-            st.session_state.prof_running = True
-            st.session_state.prof_data_log = []
-            st.toast("Data collection started", icon="✅")
-            st.rerun()
-    with c2:
-        if st.button("Stop & Process", use_container_width=True, disabled=not st.session_state.prof_running):
-            st.session_state.prof_running = False
-            if st.session_state.prof_data_log:
-                df_results = pd.DataFrame(st.session_state.prof_data_log)
-                st.session_state.simulation_results = df_results
-                st.success(f"Processed {len(df_results)} points")
+    # Collector controls and status
+    st.markdown("<div class='uf-actions-shell'>", unsafe_allow_html=True)
+    action_col, status_col = st.columns([3, 1.1])
+    with action_col:
+        st.markdown("<div class='uf-actions-grid'>", unsafe_allow_html=True)
+        start_col, stop_col, export_col = st.columns(3)
+        with start_col:
+            if st.button('Start', type='primary', use_container_width=True, disabled=running):
+                st.session_state.prof_running = True
+                st.session_state.prof_data_log = []
+                st.toast('Data collection started')
+                st.rerun()
+        with stop_col:
+            if st.button('Stop & Process', use_container_width=True, disabled=not running):
+                st.session_state.prof_running = False
+                if st.session_state.prof_data_log:
+                    df_results = pd.DataFrame(st.session_state.prof_data_log)
+                    st.session_state.simulation_results = df_results
+                    st.success(f'Processed {len(df_results)} points')
+                else:
+                    st.info('No data collected yet')
+                st.rerun()
+        with export_col:
+            has_data = len(st.session_state.simulation_results) > 0
+            if has_data:
+                csv_bytes = st.session_state.simulation_results.to_csv(index=False).encode('utf-8')
+                st.download_button('Download CSV', csv_bytes, file_name=f"urbanflow360_{datetime.now():%Y%m%d_%H%M%S}.csv", mime='text/csv', use_container_width=True)
             else:
-                st.info("No data collected yet")
-            st.rerun()
-    with c3:
-        has_data = len(st.session_state.simulation_results) > 0
-        if has_data:
-            csv_bytes = st.session_state.simulation_results.to_csv(index=False).encode("utf-8")
-            st.download_button("Download CSV", csv_bytes,
-                               file_name=f"urbanflow360_{datetime.now():%Y%m%d_%H%M%S}.csv",
-                               mime="text/csv", use_container_width=True)
-        else:
-            st.button("Download CSV", disabled=True, use_container_width=True)
-    with c4:
-        st.markdown("<div class='uf-caption'>Collector</div>", unsafe_allow_html=True)
-        _running = bool(st.session_state.prof_running)
-        _color = "#22c55e" if _running else "#f59e0b"
-        _status = "Running" if _running else "Idle"
-        st.markdown(f"<div class='uf-status'><span class='dot' style='background:{_color}'></span>{_status}</div>", unsafe_allow_html=True)
+                st.button('Download CSV', disabled=True, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.caption('Adjust the interval from the sidebar.')
+    with status_col:
+        status_html = f"""
+        <div class='uf-status-card'>
+          <div class='uf-status-card__label'>Collector</div>
+          <div class='uf-status-card__value'><span class='dot' style='background:{status_color}'></span>{status_label}</div>
+          <div class='uf-status-card__meta'>{live_record_count:,} records buffered</div>
+          <div class='uf-status-card__meta'>Auto refresh: <strong>{auto_refresh_label}</strong> ({st.session_state.refresh_seconds}s)</div>
+          <div class='uf-status-card__meta'>Last update: <strong>{last_ts_display}</strong></div>
+        </div>
+        """
+        st.markdown(status_html.strip(), unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     traffic_csv_path = (
         "data/Banglore_traffic_Dataset.csv" if selected_city == "Bangalore"
@@ -324,15 +502,15 @@ def main():
                 st.rerun()
         else:
             st.info("Collector is idle. Click Start to begin streaming data.")
-            # Provide quick actions when idle – center the button
+            # Provide quick actions when idle - center the button
             left, center, right = st.columns([1,2,1])
             with center:
                 if st.button("Clear Collected Data", use_container_width=True):
                     st.session_state.prof_data_log = []
                     st.session_state.simulation_results = pd.DataFrame()
-                    st.toast("Cleared previous data", icon="🧹")
+                    st.toast("Cleared previous data")
                     st.rerun()
-            st.caption("Tip: Use sidebar to adjust auto-refresh and interval.")
+            st.caption("Use the sidebar to tweak refresh behaviour.")
 
     # Analytics tab
     with tab_analytics:

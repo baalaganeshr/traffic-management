@@ -39,5 +39,5 @@ ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 ENV SDL_VIDEODRIVER=dummy
 ENV PYGAME_HIDE_SUPPORT_PROMPT=1
 
-# Run the unified application
-CMD ["streamlit", "run", "run_unified.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+# Run the professional dashboard
+CMD ["streamlit", "run", "run_professional_improved.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]

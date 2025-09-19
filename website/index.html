@@ -3,74 +3,116 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>VIN Traffic System · Vision Intelligence Network Traffic Management System</title>
-    <meta name="description" content="VIN Traffic System (Vision Intelligence Network Traffic Management System) — professional dashboard for real‑time traffic simulation, ML congestion prediction, and smart analytics." />
+    <title>VIN Traffic System - Vision Intelligence Network</title>
+    <meta name="description" content="VIN Traffic System unifies real-time simulation, AI forecasts, and operator tooling behind a single, dockerised web experience." />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="nav">
+    <header class="nav" data-nav>
       <div class="container nav__inner">
-        <div class="brand">VIN Traffic System</div>
-        <nav class="nav__links">
-          <a href="#about">About</a>
-          <a href="#features">Features</a>
-          <a href="/dashboard/" class="btn btn--sm">Dashboard</a>
+        <a class="brand" href="#top">VIN Traffic System</a>
+        <button class="nav__toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav id="nav-links" class="nav__links">
+          <a href="#mission">Mission</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#insights">Insights</a>
+          <a href="/dashboard/" class="btn btn--primary">Launch Dashboard</a>
         </nav>
       </div>
     </header>
 
-    <main>
+    <main id="top">
       <div id="glow" aria-hidden="true"></div>
-      <section class="hero">
-        <div class="container hero__inner hero--center">
-          <h1>Vision Intelligence Network<br/>Traffic Management System</h1>
-          <p class="lead">Real‑time traffic simulation, AI‑powered congestion alerts, and a streamlined operator dashboard — designed for cities.</p>
-          <div class="cta">
-            <a class="btn btn--lg" href="/dashboard/">Open Dashboard</a>
-            <a href="#about" class="btn btn--ghost btn--lg">Learn More</a>
+
+      <section class="hero" id="mission">
+        <div class="container hero__inner">
+          <div class="hero__main">
+            <p class="eyebrow">Vision Intelligence Network</p>
+            <h1>Turn live traffic signals into confident decisions</h1>
+            <p class="hero__lead">VIN brings together simulation, AI forecasts, and operator tooling so traffic control rooms move from reacting to anticipating.</p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="/dashboard/">Open VIN Dashboard</a>
+              <a class="btn btn--ghost" href="#capabilities">Explore capabilities</a>
+            </div>
+            <ul class="hero__stats">
+              <li><span>2 cities</span> ready-to-run data pipelines for Delhi and Bangalore.</li>
+              <li><span>&lt;60 s</span> to stream a live scenario with Docker Compose.</li>
+              <li><span>4 pillars</span> Monitor, Analytics, Map, and Data views tuned for operators.</li>
+            </ul>
+          </div>
+          <div class="hero__aside">
+            <h3>Why teams choose VIN</h3>
+            <p>Streamlined setup, explainable insights, and a single-port deployment that keeps the marketing site and dashboard together.</p>
+            <ul>
+              <li>Live control snapshot with clear status pulses.</li>
+              <li>One-click actions to start, pause, and export data.</li>
+            </ul>
           </div>
         </div>
       </section>
 
-      <section id="about" class="section">
-        <div class="container">
-          <h2>About VIN</h2>
-          <p>
-            VIN blends realistic traffic simulation with AI predictions and an operator‑first interface. It highlights hotspots, explains changes clearly, and keeps the experience fast and simple.
-          </p>
-          <ul class="bullets">
-            <li><strong>Live Ops:</strong> Monitor flow in real time and act fast.</li>
-            <li><strong>AI Alerts:</strong> Early warnings for congestion and anomalies.</li>
-            <li><strong>Analytics & Maps:</strong> Clear trends, clean charts, and city overlays.</li>
-            <li><strong>Ready to Run:</strong> Dockerized for quick demos and deploys.</li>
-          </ul>
-        </div>
-      </section>
-
-      <section id="features" class="section section--alt">
-        <div class="container">
-          <h2>Key Features</h2>
-          <div class="grid">
-            <div class="card"><h3>Realtime</h3><p>Live data collection with configurable refresh interval and status pill.</p></div>
-            <div class="card"><h3>ML Prediction</h3><p>Congestion prediction using scikit‑learn models and alerting rules.</p></div>
-            <div class="card"><h3>Analytics</h3><p>Smart detection of speed or volume across datasets; robust charts.</p></div>
-            <div class="card"><h3>Map</h3><p>City map with colored scatter layers by alert severity and tooltips.</p></div>
-            <div class="card"><h3>Exports</h3><p>CSV download for both live and processed datasets.</p></div>
-            <div class="card"><h3>Dockerized</h3><p>Ready‑to‑run container images for quick demos and deployments.</p></div>
+      <section id="capabilities" class="section">
+        <div class="container section__inner">
+          <h2>Focused capabilities for operations</h2>
+          <p class="section__lead">Each module surfaces the essentials operators need, without the noise.</p>
+          <div class="grid grid--features">
+            <article class="card"><h3>Live Monitor</h3><p>Streaming KPIs, simple controls, and recent alerts keep teams aligned.</p></article>
+            <article class="card"><h3>Predictive Signals</h3><p>Rule-based logic and scikit-learn models provide explainable congestion calls.</p></article>
+            <article class="card"><h3>Analytics Studio</h3><p>Plotly charts track speed or volume trends across live and processed sources.</p></article>
+            <article class="card"><h3>Geospatial View</h3><p>PyDeck layers highlight severity so incidents stand out at a glance.</p></article>
           </div>
         </div>
       </section>
 
-      <!-- Demo preview moved to dedicated /demo page for a cleaner, professional layout. -->
+      <section id="workflow" class="section section--alt">
+        <div class="container section__inner">
+          <h2>From feed to action in four steps</h2>
+          <ol class="steps">
+            <li><span>01</span> Start a live feed or run the bundled simulator.</li>
+            <li><span>02</span> Detect issues with congestion scoring and alert rules.</li>
+            <li><span>03</span> Coordinate with map overlays and quick exports.</li>
+            <li><span>04</span> Review outcomes with the analytics tab to refine tactics.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="insights" class="section">
+        <div class="container section__inner">
+          <h2>What teams gain with VIN</h2>
+          <div class="grid grid--insights">
+            <article class="card"><h3>Unified experience</h3><p>Landing site, docs, and dashboard share one URL on desktop or field tablets.</p></article>
+            <article class="card"><h3>Operator empathy</h3><p>Interfaces keep mission-critical information above the fold and reduce clicks.</p></article>
+            <article class="card"><h3>Extensible foundation</h3><p>Modular back-end components let you plug in new models or data feeds easily.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="cta" class="section section--cta">
+        <div class="container section__inner cta__inner">
+          <div>
+            <h2>Ready to explore VIN?</h2>
+            <p>Spin up the stack with Docker Compose, review the live simulation, and tailor the predictors to your city.</p>
+          </div>
+          <div class="cta__actions">
+            <a class="btn btn--primary" href="/dashboard/">Launch Dashboard</a>
+            <a class="btn btn--ghost" href="https://github.com/baalaganeshr/traffic-management" target="_blank" rel="noopener">View repository</a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
       <div class="container footer__inner">
-        <div>© <span id="year"></span> VIN Traffic System</div>
-        <div class="muted">Built with Streamlit · VIN</div>
+        <div>&copy; <span id="year"></span> VIN Traffic System</div>
+        <div class="muted">Professional traffic intelligence, delivered.</div>
       </div>
     </footer>
 
     <script src="script.js"></script>
   </body>
-  </html>
+</html>

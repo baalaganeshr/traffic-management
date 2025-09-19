@@ -1,10 +1,8 @@
-version: "3.9"
-
 services:
   dashboard:
     build: .
     container_name: vin-dashboard
-    command: >
+    command: >-
       streamlit run run_professional_improved.py
       --server.port=8501
       --server.address=0.0.0.0
@@ -13,8 +11,6 @@ services:
       --server.enableXsrfProtection=false
     expose:
       - "8501"
-    ports:
-      - "8511:8501"
 
   website:
     image: nginx:alpine
