@@ -132,8 +132,23 @@ main {
   background: transparent;
 }
 
+.btn--secondary {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.25) 100%);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+}
+
+.btn--secondary:hover {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.35) 100%);
+  color: #93c5fd;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(59, 130, 246, 0.25);
+}
+
 .section {
   padding: clamp(3.2rem, 6vw, 4.6rem) 0;
+  scroll-margin-top: 80px;
 }
 
 .section--alt {
@@ -157,14 +172,16 @@ main {
 
 .hero__inner {
   display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.85fr);
   gap: clamp(2rem, 4vw, 3rem);
-  align-items: stretch;
+  align-items: center;
 }
 
 .hero__main {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 560px;
 }
 
 .eyebrow {
@@ -202,6 +219,12 @@ main {
   gap: 0.6rem;
 }
 
+.hero__stats li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .hero__stats span {
   color: var(--accent);
   font-weight: 700;
@@ -209,11 +232,12 @@ main {
 }
 
 .hero__aside {
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.58);
+  border: 1px solid rgba(148,163,184,0.25);
   border-radius: var(--radius);
   padding: 1.4rem 1.6rem;
   box-shadow: var(--shadow);
+  max-width: 420px;
 }
 
 .hero__aside h3 {
