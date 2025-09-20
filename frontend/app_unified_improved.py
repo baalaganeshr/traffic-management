@@ -260,7 +260,7 @@ def main():
     transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 .uf-back-chip::before {
-    content: '?';
+    content: '\\2190';
     font-size: 1rem;
 }
 .uf-back-chip:hover {
