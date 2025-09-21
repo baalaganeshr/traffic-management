@@ -1,5 +1,5 @@
 # Core dependencies for VIN Traffic Management System v2.0
-# streamlit>=1.46.0  # Installed via production launcher to prevent auto-detection
+streamlit>=1.46.0
 pandas>=2.2.3
 plotly>=6.2.0
 numpy>=1.26
