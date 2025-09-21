@@ -1,1 +1,0 @@
-"Adaptive signal control prototypes."

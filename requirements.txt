@@ -1,15 +1,6 @@
+# Core dependencies for Kerala Traffic Management System
 streamlit>=1.46.0
 pandas>=2.2.3
-numpy>=1.26
 plotly>=6.2.0
-scikit-learn>=1.4
+numpy>=1.26
 pydeck
-
-# PRIT Integration Dependencies
-pygame>=2.5
-neat-python>=0.92
-
-# Additional packages for enhanced features
-asyncio-mqtt
-dataclasses
-enum34

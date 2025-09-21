@@ -1,6 +1,0 @@
-<nodes>
-    <node id="1" x="0.0" y="0.0" type="traffic_light"/>
-    <node id="2" x="100.0" y="0.0" type="traffic_light"/>
-    <node id="3" x="100.0" y="100.0" type="traffic_light"/>
-    <node id="4" x="0.0" y="100.0" type="traffic_light"/>
-</nodes>

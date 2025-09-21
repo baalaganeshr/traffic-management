@@ -3,7 +3,7 @@ services:
     build: .
     container_name: vin-dashboard
     command: >-
-      streamlit run run_professional_improved.py
+      streamlit run frontend/app_unified_improved.py
       --server.port=8501
       --server.address=0.0.0.0
       --server.headless=true
@@ -16,7 +16,7 @@ services:
     build: .
     container_name: vin-demo
     command: >-
-      streamlit run run_adaptive_demo.py
+      streamlit run demo/app_simple_kerala.py
       --server.port=8502
       --server.address=0.0.0.0
       --server.headless=true

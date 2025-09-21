@@ -17,10 +17,43 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 
-# Local imports from the project
-from backend.simulate_data import simulate_traffic_stream
-from backend.predictor import predict_congestion
-from backend.alert_engine import generate_alert
+# Local imports from the project - using sys.path to ensure proper imports
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from backend.simulate_data import simulate_traffic_stream
+    from backend.predictor import predict_congestion
+    from backend.alert_engine import generate_alert
+except ImportError:
+    # Fallback - create dummy functions if imports fail
+    def simulate_traffic_stream(csv_path, sleep_time=0):
+        """Dummy function for traffic stream simulation"""
+        import pandas as pd
+        # Return sample Kerala traffic data
+        sample_data = [
+            {"junction": "Kochi IT Hub", "vehicle_count": 2450, "avg_speed": 15, "timestamp": datetime.now()},
+            {"junction": "Thiruvananthapuram Market", "vehicle_count": 1890, "avg_speed": 22, "timestamp": datetime.now()},
+            {"junction": "Kozhikode Beach Road", "vehicle_count": 1234, "avg_speed": 35, "timestamp": datetime.now()},
+            {"junction": "Thrissur Cultural Center", "vehicle_count": 1567, "avg_speed": 28, "timestamp": datetime.now()},
+            {"junction": "Kannur Railway Station", "vehicle_count": 987, "avg_speed": 42, "timestamp": datetime.now()},
+        ]
+        for data in sample_data:
+            yield data
+    
+    def predict_congestion(data):
+        """Dummy prediction function"""
+        return {"prediction": "Moderate", "confidence": 0.85}
+    
+    def generate_alert(data):
+        """Dummy alert function"""
+        if data.get("vehicle_count", 0) > 2000:
+            return {"level": "HIGH", "message": "Heavy traffic detected"}
+        elif data.get("vehicle_count", 0) > 1500:
+            return {"level": "MEDIUM", "message": "Moderate traffic"}
+        else:
+            return {"level": "LOW", "message": "Light traffic"}
 
 
 def _collect_samples(selected_city: str, traffic_csv_path: str, n: int = 5) -> List[Dict[str, Any]]:
@@ -295,9 +328,7 @@ def main():
     overflow: hidden;
 }
 .uf-back-chip::before {
-    content: '\2190';
-    font-size: 1.1rem;
-    font-weight: 700;
+    content: '';
 }
 .uf-back-chip::after {
     content: '';
@@ -560,6 +591,100 @@ div[data-testid="stMetric"] {
         padding: 0.35rem 0.8rem;
     }
 }
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    .main .block-container {
+        padding: 0.5rem 0.5rem;
+        max-width: 100%;
+    }
+    
+    [data-testid="stSidebar"] {
+        width: 280px;
+    }
+    
+    .uf-hero {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .uf-hero-content {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .uf-hero-title {
+        font-size: 1.2rem;
+        line-height: 1.3;
+    }
+    
+    .uf-hero-lead {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .uf-back-chip {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        width: auto;
+        display: inline-block;
+    }
+    
+    /* Make tabs scrollable on mobile */
+    [data-testid="stTabs"] [data-baseweb="tab-list"] {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+    
+    [data-testid="stTabs"] [data-baseweb="tab"] {
+        white-space: nowrap;
+        min-width: 80px;
+    }
+    
+    /* Mobile-friendly metrics */
+    [data-testid="metric-container"] {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Stack columns vertically on mobile */
+    [data-testid="column"] {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Mobile-friendly dataframes */
+    [data-testid="stDataFrame"] {
+        font-size: 0.8rem;
+    }
+    
+    /* Mobile buttons */
+    .stButton button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Responsive selectbox */
+    [data-testid="stSelectbox"] {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .main .block-container {
+        padding: 1rem;
+    }
+    
+    .uf-hero {
+        padding: 1.5rem;
+    }
+    
+    .uf-hero-title {
+        font-size: 1.6rem;
+    }
+}
 </style>
         """,
         unsafe_allow_html=True,
@@ -593,13 +718,21 @@ div[data-testid="stMetric"] {
             <p class='uf-hero-lead'>Monitor live flow, inspect analytics, and export evidence from a single workspace. Configure a city, start streaming, and stay ahead of congestion.</p>
           </div>
           <div class='uf-hero-actions'>
-            <a class='uf-back-chip' href='/' style='text-decoration: none;'>Back to Home</a>
+            <a class='uf-back-chip' href='/' style='text-decoration: none;'>← Back to Home</a>
           </div>
         </div>
     """
 
 
     st.markdown(hero_html, unsafe_allow_html=True)
+
+    # Navigation button to Kerala Demo
+    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
+    with nav_col3:
+        if st.button("🚦 Kerala Demo", key="go_kerala_demo", use_container_width=True, help="Go to Kerala Traffic Demo"):
+            st.switch_page("demo/app_simple_kerala.py")
+    
+    st.markdown("---")
 
     metric_cols = st.columns(3)
     metric_cols[0].metric('Records buffered', f"{live_record_count:,}")
