@@ -1,0 +1,21 @@
+{
+  "name": "traffic-management",
+  "description": "Kerala Traffic Management System with Auto-Refresh",
+  "repository": "https://github.com/baalaganeshr/traffic-management",
+  "keywords": ["python", "streamlit", "traffic", "management"],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [],
+  "env": {
+    "RENDER": "true"
+  }
+}
