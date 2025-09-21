@@ -32,5 +32,5 @@ ENV STREAMLIT_SERVER_HEADLESS=true
 ENV STREAMLIT_SERVER_ENABLE_CORS=false
 ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
 
-# Use our enhanced start script that handles port correctly
-CMD ["./start.sh"]
+# Use shell form to properly handle $PORT environment variable
+CMD bash -c "PORT=\${PORT:-8501} && echo 'Starting on port:' \$PORT && streamlit run frontend/app_unified_improved.py --server.port=\$PORT --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false --browser.gatherUsageStats=false"
