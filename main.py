@@ -61,7 +61,7 @@ def main():
             
         cmd = [
             sys.executable, '-m', 'streamlit', 'run',
-            'frontend/streamlit_app.py',
+            'demo/kerala_demo.py',
             f'--server.port={port}',
             '--server.address=0.0.0.0',
             '--server.headless=true',
