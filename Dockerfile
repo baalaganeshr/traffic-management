@@ -20,7 +20,7 @@ RUN pip install --upgrade pip && \
 # Copy the entire application
 COPY . .
 
-# Expose the dynamic port (Render assigns $PORT)
+# Expose the dynamic port (Render assigns $PORT, defaults to 8501 locally)
 EXPOSE $PORT
 
 # Set environment variables for Streamlit
