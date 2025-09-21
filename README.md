@@ -1,6 +1,7 @@
-# VIN Traffic System
+````markdown
+# 🚦 VIN Traffic Management System v2.0
 
-Single‑site traffic monitoring and analytics for cities, built around a polished Streamlit dashboard and an Nginx front end. It ships ready‑to‑run via Docker Compose and includes live simulation, AI‑powered congestion signals, analytics, and maps.
+**Production-grade traffic monitoring and analytics platform** with enterprise-level deployment capabilities, comprehensive health monitoring, and bulletproof configuration management.
 
 ## ✨ Highlights
 

@@ -1,6 +1,7 @@
-# Core dependencies for Kerala Traffic Management System
+# Core dependencies for VIN Traffic Management System v2.0
 streamlit>=1.46.0
 pandas>=2.2.3
 plotly>=6.2.0
 numpy>=1.26
-pydeck
+pydeck>=0.8.0
+requests>=2.31.0

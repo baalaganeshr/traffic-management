@@ -1,1 +1,1 @@
-web: streamlit run demo/app_simple_kerala.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+web: python app.py

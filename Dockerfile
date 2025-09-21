@@ -1,36 +1,77 @@
-# Use Python 3.11 slim image
-FROM python:3.11-slim
+# Production Dockerfile for Traffic Management System
+# Multi-stage build for optimized production deployment
 
-# Set working directory
-WORKDIR /app
+FROM python:3.11-slim as builder
 
-# Install minimal system dependencies (removed unnecessary graphics libs for web deployment)
+# Set build arguments
+ARG APP_VERSION=2.0.0
+ARG BUILD_DATE
+ARG VCS_REF
+
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt ./requirements.txt
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Install Python dependencies with upgraded pip
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Copy requirements and install dependencies
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Copy the entire application
-COPY . .
+# Production stage
+FROM python:3.11-slim as production
 
-# Expose port 8501 (Render will use $PORT at runtime, but Docker needs a default)
+# Set labels for better image management
+LABEL maintainer="VIN Traffic System" \
+      version="${APP_VERSION}" \
+      description="Production Traffic Management System" \
+      build-date="${BUILD_DATE}" \
+      vcs-ref="${VCS_REF}"
+
+# Create app user for security
+RUN groupadd -r app && useradd -r -g app app
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+
+# Set up application directory
+WORKDIR /app
+RUN chown -R app:app /app
+
+# Copy application files
+COPY --chown=app:app . .
+
+# Copy virtual environment path
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Set production environment variables
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Expose port (Docker build requirement)
 EXPOSE 8501
 
-# Make start script executable
-RUN chmod +x start.sh
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8501}/_stcore/health || exit 1
 
-# Set environment variables for Streamlit
-ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
-ENV STREAMLIT_SERVER_HEADLESS=true
-ENV STREAMLIT_SERVER_ENABLE_CORS=false
-ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
+# Switch to non-root user
+USER app
 
-# Use shell form to properly handle $PORT environment variable
-CMD bash -c "PORT=\${PORT:-8501} && echo 'Starting on port:' \$PORT && streamlit run frontend/app_unified_improved.py --server.port=\$PORT --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false --browser.gatherUsageStats=false"
+# Use the production app launcher
+CMD ["python", "app.py"]
