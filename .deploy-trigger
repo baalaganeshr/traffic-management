@@ -1,4 +1,6 @@
 # Deployment Trigger
 # This file triggers a new Railway deployment after Dockerfile changes
-# Timestamp: Sep 21, 2025 10:07 AM IST
-# Changes: Fixed Dockerfile working directory and Streamlit CMD path
+# Timestamp: Sep 21, 2025 11:48 AM IST
+# Changes: Updated Dockerfile CMD from JSON-array to shell form for better Render/Railway compatibility
+# Status: Dockerfile now uses shell form CMD for Streamlit execution
+# Update: Fixed CMD instruction to use shell form instead of JSON array

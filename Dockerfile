@@ -20,7 +20,7 @@ RUN pip install --upgrade pip && \
 # Copy the entire application
 COPY . .
 
-# Expose port (Render will use $PORT at runtime, but Docker needs a default)
+# Expose port 8501 (Render will use $PORT at runtime, but Docker needs a default)
 EXPOSE 8501
 
 # Set environment variables for Streamlit
@@ -29,9 +29,5 @@ ENV STREAMLIT_SERVER_HEADLESS=true
 ENV STREAMLIT_SERVER_ENABLE_CORS=false
 ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
 
-# Copy and make start script executable
-COPY start.sh ./start.sh
-RUN chmod +x ./start.sh
-
-# Run the professional dashboard with dynamic port using start script
-CMD ["./start.sh"]
+# Run the professional dashboard with direct streamlit command (shell form)
+CMD streamlit run frontend/app_unified_improved.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false
