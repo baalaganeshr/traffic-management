@@ -218,8 +218,13 @@ a.back-button, a.back-button:hover, a.back-button:visited, a.back-button:focus, 
     .back-button {
         padding: 0.75rem 1.5rem;
         font-size: 0.9rem;
-        width: 100%;
+        display: inline-flex;
         justify-content: center;
+    }
+    
+    /* Keep right alignment on mobile but make it more accessible */
+    div[style*="text-align: right"] {
+        text-align: right !important;
     }
     
     .stDataFrame {
@@ -400,14 +405,14 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
-    # Navigation buttons
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
-        if st.button("📊 Dashboard", key="go_dashboard", use_container_width=True, help="Go to Professional Dashboard"):
-            st.switch_page("frontend/app_unified_improved.py")
-    with col3:
-        if st.button("🔄 Refresh", key="refresh_demo", use_container_width=True, help="Refresh Kerala traffic data"):
-            st.rerun()
+    # Add back to home button in the header area (right aligned)
+    st.markdown("""
+    <div style="text-align: right; margin: 1rem 0;">
+        <a class='back-button' href='/' style='text-decoration: none !important;'>
+            <span class='back-arrow'>←</span> Back to Home
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Create main DataFrame
     df = create_traffic_dataframe()

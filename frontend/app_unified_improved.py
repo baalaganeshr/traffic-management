@@ -62,9 +62,9 @@ def _collect_samples(selected_city: str, traffic_csv_path: str, n: int = 5) -> L
     for i, row in enumerate(simulate_traffic_stream(traffic_csv_path, sleep_time=0)):
         if selected_city == "Delhi":
             row["Status"] = predict_congestion(row)
-            alert = generate_alert(row, row.get("Status"), city="Delhi")
+            alert = generate_alert(row)
         else:
-            alert = generate_alert(row, city="Bangalore")
+            alert = generate_alert(row)
 
         row["timestamp"] = datetime.now()
         row["alert"] = alert or "No Alert"
@@ -726,11 +726,7 @@ div[data-testid="stMetric"] {
 
     st.markdown(hero_html, unsafe_allow_html=True)
 
-    # Navigation button to Kerala Demo
-    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 1])
-    with nav_col3:
-        if st.button("🚦 Kerala Demo", key="go_kerala_demo", use_container_width=True, help="Go to Kerala Traffic Demo"):
-            st.switch_page("demo/app_simple_kerala.py")
+    # Navigation section - simplified (Back to Home button already in hero section)
     
     st.markdown("---")
 
