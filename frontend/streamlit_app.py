@@ -34,7 +34,7 @@ import os
 import sys
 
 # Check if we're being run directly (not through our production launcher)
-if __name__ == "__main__" and not os.environ.get('VIN_PRODUCTION_MODE'):
+if __name__ == "__main__" and not os.environ.get('VIN_PRODUCTION_MODE') and not os.environ.get('VIN_DASHBOARD_MODE'):
     print("⚠️  WARNING: Running Streamlit app directly")
     print("🚀 For production deployment, use: python app.py")
     print("🔧 This ensures proper configuration and error handling")
@@ -55,6 +55,10 @@ if __name__ == "__main__" and not os.environ.get('VIN_PRODUCTION_MODE'):
     except Exception as e:
         print(f"❌ Error launching production mode: {e}")
         print("🔄 Falling back to direct Streamlit execution")
+
+# If in dashboard mode, skip the production redirect
+if os.environ.get('VIN_DASHBOARD_MODE'):
+    print("🎯 Running in dashboard mode - skipping production redirect")
 
 from datetime import datetime
 import time

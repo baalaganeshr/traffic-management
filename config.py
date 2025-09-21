@@ -63,7 +63,7 @@ class AppConfig:
     # File Paths
     app_root: Path = Path(__file__).parent
     frontend_app: Path = Path("frontend/streamlit_app.py")
-    demo_app: Path = Path("demo/app_simple_kerala.py")
+    demo_app: Path = Path("demo/kerala_demo.py")
     
     def __post_init__(self):
         """Validate configuration after initialization"""

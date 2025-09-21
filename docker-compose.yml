@@ -2,6 +2,9 @@ services:
   dashboard:
     build: .
     container_name: vin-dashboard
+    environment:
+      - VIN_PRODUCTION_MODE=false
+      - VIN_DASHBOARD_MODE=true
     command: >-
       streamlit run frontend/streamlit_app.py
       --server.port=8501
@@ -15,8 +18,11 @@ services:
   demo:
     build: .
     container_name: vin-demo
+    environment:
+      - VIN_PRODUCTION_MODE=false
+      - VIN_DEMO_MODE=true
     command: >-
-      streamlit run demo/app_simple_kerala.py
+      streamlit run demo/kerala_demo.py
       --server.port=8502
       --server.address=0.0.0.0
       --server.headless=true
