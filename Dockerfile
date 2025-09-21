@@ -4,20 +4,10 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies for pygame and graphics
+# Install minimal system dependencies (removed unnecessary graphics libs for web deployment)
 RUN apt-get update && apt-get install -y \
     gcc \
     python3-dev \
-    libsdl2-dev \
-    libsdl2-image-dev \
-    libsdl2-mixer-dev \
-    libsdl2-ttf-dev \
-    libsmpeg-dev \
-    libportmidi-dev \
-    libavformat-dev \
-    libswscale-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install Python dependencies
@@ -30,14 +20,18 @@ RUN pip install --upgrade pip && \
 # Copy the entire application
 COPY . .
 
-# Expose Streamlit port
-EXPOSE 8501
+# Expose the dynamic port (Render assigns $PORT)
+EXPOSE $PORT
 
-# Set environment variables
-ENV STREAMLIT_SERVER_PORT=8501
+# Set environment variables for Streamlit
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
-ENV SDL_VIDEODRIVER=dummy
-ENV PYGAME_HIDE_SUPPORT_PROMPT=1
+ENV STREAMLIT_SERVER_HEADLESS=true
+ENV STREAMLIT_SERVER_ENABLE_CORS=false
+ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
 
-# Run the professional dashboard
-CMD ["streamlit", "run", "run_professional_improved.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+# Copy and make start script executable
+COPY start.sh ./start.sh
+RUN chmod +x ./start.sh
+
+# Run the professional dashboard with dynamic port using start script
+CMD ["./start.sh"]
