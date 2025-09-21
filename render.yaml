@@ -1,5 +1,5 @@
 # Render Blueprint - Infrastructure as Code
-# FORCE: Disable all auto-detection and use our production system
+# NUCLEAR: Force native Python runtime, no Docker, no auto-detection
 
 services:
   - name: traffic-management
@@ -8,16 +8,15 @@ services:
     plan: free
     region: oregon
     
-    # Build configuration - install dependencies without streamlit
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    # Native Python build - NO Docker
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
     
-    # FORCE: Explicit start command - NO AUTO-DETECTION
+    # EXPLICIT: Force our entry point
     startCommand: python main.py
     
-    # Disable auto-detection features
-    autoDeploy: false
-    
-    # Environment variables
+    # Environment variables for production
     envVars:
       - key: RENDER
         value: "true"
@@ -25,5 +24,7 @@ services:
         value: "true"
       - key: PYTHON_VERSION
         value: "3.11"
-      - key: DISABLE_STREAMLIT_AUTO_DETECTION
-        value: "true"
+      - key: PORT
+        value: "10000"
+      - key: PYTHONPATH
+        value: "/opt/render/project/src"
