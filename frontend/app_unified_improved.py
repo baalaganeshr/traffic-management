@@ -9,6 +9,26 @@ IMPORTANT: For production deployment, use 'python app.py' instead of running thi
 This ensures proper configuration, error handling, and environment detection.
 """
 
+# EMERGENCY DIAGNOSTIC - This will show if Render is bypassing our main.py
+import os
+import sys
+print("\n" + "="*60)
+print("🚨 EMERGENCY DIAGNOSTIC - STREAMLIT FILE EXECUTED DIRECTLY")
+print("="*60)
+print(f"📂 Working Directory: {os.getcwd()}")
+print(f"🐍 Python Path: {sys.path}")
+print(f"📁 Files in root: {[f for f in os.listdir('.') if f.endswith('.py')]}")
+print(f"🔍 Main.py exists: {os.path.exists('main.py')}")
+print(f"🔍 App.py exists: {os.path.exists('app.py')}")
+print(f"🔍 Start.py exists: {os.path.exists('start.py')}")
+print(f"⚙️ Environment Variables:")
+for key in ['RENDER', 'PORT', 'PYTHON_PATH', 'VIN_PRODUCTION_MODE']:
+    print(f"   {key}: {os.environ.get(key, 'NOT SET')}")
+print("="*60)
+print("⚠️  THIS SHOULD NOT HAPPEN IN PRODUCTION!")
+print("⚠️  Render should execute main.py, not this file directly!")
+print("="*60 + "\n")
+
 # Production deployment check - redirect to proper launcher if needed
 import os
 import sys
