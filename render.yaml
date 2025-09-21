@@ -19,10 +19,10 @@ services:
       pip install -r requirements.txt
       echo "✅ RENDER BLUEPRINT BUILD COMPLETE"
     
-    # EXPLICIT: Force our entry point with full path
+    # EXPLICIT: Force our streamlit entry point
     startCommand: |
-      echo "🎯 RENDER BLUEPRINT STARTING main.py"
-      python main.py
+      echo "🎯 RENDER BLUEPRINT STARTING Kerala Demo"
+      python run.py
     
     # Environment variables for production
     envVars:
