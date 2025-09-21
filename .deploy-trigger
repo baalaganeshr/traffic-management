@@ -1,4 +1,5 @@
 # Deployment Trigger
 # This file triggers a new Railway deployment after Dockerfile changes
-# Timestamp: Sep 21, 2025 10:07 AM IST
-# Changes: Fixed Dockerfile working directory and Streamlit CMD path
+# Timestamp: Sep 21, 2025 11:17 AM IST
+# Changes: Triggering redeploy after verifying Dockerfile and start.sh configuration
+# Status: Dockerfile uses $PORT correctly, start.sh points to correct Streamlit script
