@@ -43,7 +43,7 @@ def main():
         
         cmd = [
             sys.executable, '-m', 'streamlit', 'run',
-            'frontend/app_unified_improved.py',
+            'frontend/streamlit_app.py',
             f'--server.port={port}',
             '--server.address=0.0.0.0',
             '--server.headless=true',
