@@ -22,6 +22,8 @@ def init_session_state():
         st.session_state.incident_count = 0
     if 'auto_refresh_enabled' not in st.session_state:
         st.session_state.auto_refresh_enabled = True
+    if 'refresh_interval' not in st.session_state:
+        st.session_state.refresh_interval = 5  # Default 5 seconds for real-time feel
     
     # AI control state (unique names to avoid widget conflicts)
     if 'ai_mode_active' not in st.session_state:
@@ -43,6 +45,13 @@ st.markdown("""
 /* Main theme */
 .stApp {
     background: linear-gradient(180deg, #0e1425, #1a202c);
+}
+
+/* Pulse animation for changes */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
 }
 
 /* Traffic Light CSS - CRITICAL */
@@ -311,32 +320,70 @@ def render_vehicle_analytics():
 def render_ai_control_panel(ns_state, ew_state, ns_vehicles, ew_vehicles, ns_timer, ew_timer):
     """Render AI control panel matching mobile screenshot"""
     
-    # Ensure session state is initialized
-    # Use consistent session state variables (managed by init_session_state)
+    # Enhanced Mode Control with detailed explanations
+    st.markdown("**🎛️ Signal Control Mode**")
+    
     col1, col2 = st.columns([1, 1])
     
     with col1:
-        st.markdown("**Mode**")
         if st.session_state.ai_mode_active:
-            st.success("🤖 AI Adaptive")
+            st.success("🤖 AI Adaptive Mode")
+            st.markdown("""
+            <div style="font-size: 0.8rem; color: #4ade80; margin-top: 0.5rem;">
+                ✅ Dynamic timing based on traffic density<br>
+                ✅ Real-time optimization algorithms<br>
+                ✅ Automatic emergency vehicle priority
+            </div>
+            """, unsafe_allow_html=True)
         else:
-            st.warning("👤 Manual")
+            st.warning("👤 Manual Control Mode")
+            st.markdown("""
+            <div style="font-size: 0.8rem; color: #fbbf24; margin-top: 0.5rem;">
+                ⚠️ Fixed timing patterns<br>
+                ⚠️ No automatic optimization<br>
+                ⚠️ Requires operator intervention
+            </div>
+            """, unsafe_allow_html=True)
     
     with col2:
-        if st.button("Toggle Mode", use_container_width=True, key="toggle_ai_mode"):
+        st.markdown("**Toggle Control**")
+        if st.button("🔄 Switch to " + ("Manual" if st.session_state.ai_mode_active else "AI Mode"), 
+                    use_container_width=True, key="toggle_ai_mode",
+                    type="secondary"):
             st.session_state.ai_mode_active = not st.session_state.ai_mode_active
+            # Show notification
+            if st.session_state.ai_mode_active:
+                st.success("Switched to AI Adaptive Mode!")
+            else:
+                st.warning("Switched to Manual Control Mode!")
             st.rerun()
     
-    st.markdown("**Current AI Timings**")
+    # Dynamic timing display based on mode
+    mode_indicator = "🤖 AI Adaptive Timings" if st.session_state.ai_mode_active else "👤 Manual Fixed Timings"
+    st.markdown(f"**{mode_indicator}**")
+    
+    # Show mode-specific explanation
+    if st.session_state.ai_mode_active:
+        st.markdown("""
+        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem; padding: 0.5rem; background: rgba(30, 41, 59, 0.3); border-radius: 6px;">
+            🧠 AI is dynamically adjusting signal timing based on real-time vehicle density and traffic patterns
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem; padding: 0.5rem; background: rgba(30, 41, 59, 0.3); border-radius: 6px;">
+            ⚙️ Using standard fixed timing patterns - No automatic optimization active
+        </div>
+        """, unsafe_allow_html=True)
     
     # Enhanced timing displays with real data
     col1, col2 = st.columns([3, 1])
     with col1:
         # Calculate progress based on actual state
         if ns_state == "green":
-            progress_val = max(0.1, int(ns_timer.replace('s', '')) / 25) if 's' in ns_timer else 0.5
+            progress_val = min(1.0, max(0.1, int(ns_timer.replace('s', '')) / 25)) if 's' in ns_timer else 0.5
         elif ns_state == "yellow":
-            progress_val = max(0.1, int(ns_timer.replace('s', '')) / 3) if 's' in ns_timer else 0.3
+            progress_val = min(1.0, max(0.1, int(ns_timer.replace('s', '')) / 3)) if 's' in ns_timer else 0.3
         else:
             progress_val = 0.1
             
@@ -360,9 +407,9 @@ def render_ai_control_panel(ns_state, ew_state, ns_vehicles, ew_vehicles, ns_tim
     with col1:
         # Calculate progress based on actual state
         if ew_state == "green":
-            progress_val = max(0.1, int(ew_timer.replace('s', '')) / 25) if 's' in ew_timer else 0.5
+            progress_val = min(1.0, max(0.1, int(ew_timer.replace('s', '')) / 25)) if 's' in ew_timer else 0.5
         elif ew_state == "yellow":
-            progress_val = max(0.1, int(ew_timer.replace('s', '')) / 3) if 's' in ew_timer else 0.3
+            progress_val = min(1.0, max(0.1, int(ew_timer.replace('s', '')) / 3)) if 's' in ew_timer else 0.3
         else:
             progress_val = 0.1
             
@@ -505,6 +552,18 @@ def render_modern_dashboard():
     # Get current traffic data
     ns_vehicles, ew_vehicles, ns_state, ew_state, ns_timer, ew_timer = get_live_traffic_data()
     
+    # Check if data changed from previous cycle (for visual feedback)
+    prev_ns_state = st.session_state.get('prev_ns_state', ns_state)
+    prev_ew_state = st.session_state.get('prev_ew_state', ew_state)
+    state_changed = (prev_ns_state != ns_state) or (prev_ew_state != ew_state)
+    
+    # Store current state for next comparison
+    st.session_state.prev_ns_state = ns_state
+    st.session_state.prev_ew_state = ew_state
+    
+    # Add pulse effect for changes
+    pulse_effect = "animation: pulse 2s infinite;" if state_changed else ""
+    
     # Signal Status Display with improved alignment
     col1, col2 = st.columns(2, gap="medium")
     
@@ -515,7 +574,7 @@ def render_modern_dashboard():
         green_class = "light green" if ns_state == "green" else "light green off"
         
         st.markdown(f"""
-        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box;">
+        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box; {pulse_effect}">
             <div style="flex-shrink: 0;">
                 <h4 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.1rem;">Lane N/S</h4>
                 <p style="color: #94a3b8; margin: 0 0 1rem 0; font-size: 0.9rem;">{ns_vehicles} vehicles waiting</p>
@@ -542,7 +601,7 @@ def render_modern_dashboard():
         green_class = "light green" if ew_state == "green" else "light green off"
         
         st.markdown(f"""
-        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box;">
+        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box; {pulse_effect}">
             <div style="flex-shrink: 0;">
                 <h4 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.1rem;">Lane E/W</h4>
                 <p style="color: #94a3b8; margin: 0 0 1rem 0; font-size: 0.9rem;">{ew_vehicles} vehicles waiting</p>
@@ -620,10 +679,11 @@ def main():
         st.session_state.manual_override_active = False
         st.session_state.incident_count = 0
     
-    # Auto-refresh every 30 seconds (only if enabled)
+    # Auto-refresh with configurable interval (only if enabled)
     current_time = time.time()
     auto_refresh_enabled = st.session_state.get('auto_refresh_enabled', True)
-    if auto_refresh_enabled and current_time - st.session_state.last_update > 30:
+    refresh_interval = st.session_state.get('refresh_interval', 5)
+    if auto_refresh_enabled and current_time - st.session_state.last_update > refresh_interval:
         st.session_state.last_update = current_time
         st.session_state.current_cycle += 1
         st.rerun()
@@ -645,11 +705,13 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # Auto-refresh control panel
+    # Enhanced Auto-refresh control panel with interval selector
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         auto_refresh_enabled = st.session_state.get('auto_refresh_enabled', True)
+        refresh_interval = st.session_state.get('refresh_interval', 5)
         
+        # Top row: Main controls
         col_a, col_b, col_c = st.columns([1, 1, 1])
         with col_a:
             if st.button("▶️ Enable Auto-Refresh" if not auto_refresh_enabled else "⏸️ Pause Auto-Refresh", 
@@ -659,13 +721,35 @@ def main():
         
         with col_b:
             if st.button("🔄 Refresh Now", key="manual_refresh", use_container_width=True):
-                st.session_state.last_update = time.time() - 31  # Force refresh
+                st.session_state.last_update = time.time() - (refresh_interval + 1)  # Force refresh
                 st.rerun()
         
         with col_c:
             refresh_status = "🟢 LIVE" if auto_refresh_enabled else "🔴 PAUSED"
             st.markdown(f"<div style='text-align: center; padding: 0.5rem; color: white;'>{refresh_status}</div>", 
                        unsafe_allow_html=True)
+        
+        # Bottom row: Interval selector 
+        st.markdown("**⏱️ Update Interval**")
+        col_d, col_e, col_f = st.columns([1, 1, 1])
+        
+        with col_d:
+            if st.button("⚡ Real-time (3s)", key="interval_3", use_container_width=True, 
+                        type="primary" if refresh_interval == 3 else "secondary"):
+                st.session_state.refresh_interval = 3
+                st.rerun()
+        
+        with col_e:
+            if st.button("🕐 Normal (5s)", key="interval_5", use_container_width=True,
+                        type="primary" if refresh_interval == 5 else "secondary"):
+                st.session_state.refresh_interval = 5
+                st.rerun()
+                
+        with col_f:
+            if st.button("🐌 Slow (10s)", key="interval_10", use_container_width=True,
+                        type="primary" if refresh_interval == 10 else "secondary"):
+                st.session_state.refresh_interval = 10
+                st.rerun()
 
     # Demo Information Panel
     with st.expander("ℹ️ About This Demo - Traffic Management System Features", expanded=False):
@@ -716,22 +800,40 @@ def main():
     # Main Dashboard Cards Layout
     render_modern_dashboard()
 
-    # Auto-refresh indicator with more detailed status
+    # Enhanced auto-refresh indicator with real-time countdown and change highlights
     auto_refresh_enabled = st.session_state.get('auto_refresh_enabled', True)
+    refresh_interval = st.session_state.get('refresh_interval', 5)
     current_time = time.time()
     last_update = st.session_state.get('last_update', current_time)
     seconds_since_update = int(current_time - last_update)
-    next_refresh_in = max(0, 30 - seconds_since_update)
+    next_refresh_in = max(0, refresh_interval - seconds_since_update)
     
-    status_text = f"🟢 LIVE - Next refresh in {next_refresh_in}s" if auto_refresh_enabled else "🔴 PAUSED - Auto-refresh disabled"
+    # Calculate if we just updated (for visual feedback)
+    just_updated = seconds_since_update <= 1
+    
+    if auto_refresh_enabled:
+        if next_refresh_in > 0:
+            status_text = f"🟢 LIVE - Next refresh in {next_refresh_in}s (Every {refresh_interval}s)"
+            status_color = "#4ade80"
+        else:
+            status_text = f"🔄 UPDATING... (Every {refresh_interval}s)"
+            status_color = "#fbbf24"
+    else:
+        status_text = f"🔴 PAUSED - Auto-refresh disabled (Was every {refresh_interval}s)"
+        status_color = "#ef4444"
+    
+    # Add update flash effect
+    flash_effect = "box-shadow: 0 0 20px rgba(74, 222, 128, 0.5); border: 2px solid #4ade80;" if just_updated else ""
     
     st.markdown(f"""
-    <div style="text-align: center; padding: 1rem; margin-top: 2rem; background: rgba(30, 41, 59, 0.3); border-radius: 8px; border: 1px solid #475569;">
-        <div style="color: {'#4ade80' if auto_refresh_enabled else '#ef4444'}; font-weight: 600; margin-bottom: 0.5rem;">
+    <div style="text-align: center; padding: 1rem; margin-top: 2rem; background: rgba(30, 41, 59, 0.3); border-radius: 8px; border: 1px solid #475569; {flash_effect}">
+        <div style="color: {status_color}; font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">
             {status_text}
         </div>
         <div style="color: #64748b; font-size: 0.9rem;">
-            Last update: {datetime.now().strftime("%H:%M:%S")} | Cycle: {st.session_state.current_cycle} | Mode: {'AI' if not st.session_state.get('manual_override_status', False) else 'Manual'}
+            Last update: {datetime.now().strftime("%H:%M:%S")} | Cycle: {st.session_state.current_cycle} | Mode: {'🤖 AI Adaptive' if st.session_state.get('ai_mode_active', True) else '👤 Manual Control'}
+            <br>
+            <span style="color: #fbbf24;">💡 Watch traffic lights change states & vehicle counts update!</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
