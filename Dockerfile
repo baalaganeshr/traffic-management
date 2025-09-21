@@ -74,4 +74,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 USER app
 
 # Use the production app launcher
-CMD ["python", "app.py"]
+CMD ["python", "start.py"]
