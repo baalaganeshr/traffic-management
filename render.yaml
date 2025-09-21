@@ -8,13 +8,21 @@ services:
     plan: free
     region: oregon
     
-    # Native Python build - NO Docker
+    # Native Python build - NO Docker with diagnostics
     buildCommand: |
+      echo "🚀 RENDER BLUEPRINT BUILD STARTING"
+      echo "📂 Build directory contents:"
+      ls -la || dir
+      echo "📋 Requirements:"
+      cat requirements.txt
       pip install --upgrade pip
       pip install -r requirements.txt
+      echo "✅ RENDER BLUEPRINT BUILD COMPLETE"
     
-    # EXPLICIT: Force our entry point
-    startCommand: python main.py
+    # EXPLICIT: Force our entry point with full path
+    startCommand: |
+      echo "🎯 RENDER BLUEPRINT STARTING main.py"
+      python main.py
     
     # Environment variables for production
     envVars:
