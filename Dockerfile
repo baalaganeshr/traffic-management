@@ -30,14 +30,13 @@ RUN pip install --upgrade pip && \
 # Copy the entire application
 COPY . .
 
-# Expose Streamlit port
-EXPOSE 8501
+# Expose port (will be set by $PORT environment variable)
+EXPOSE $PORT
 
-# Set environment variables
-ENV STREAMLIT_SERVER_PORT=8501
+# Set environment variables for Streamlit
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 ENV SDL_VIDEODRIVER=dummy
 ENV PYGAME_HIDE_SUPPORT_PROMPT=1
 
-# Run the professional dashboard
-CMD ["streamlit", "run", "run_professional_improved.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+# Run the Streamlit dashboard using $PORT for Render deployment
+CMD streamlit run frontend/app_unified_improved.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
