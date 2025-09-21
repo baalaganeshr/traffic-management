@@ -11,11 +11,23 @@ import traceback
 def main():
     """Enhanced entry point with proper error handling"""
     
+    # Create proof file that main.py executed
+    with open('/tmp/MAIN_PY_EXECUTED', 'w') as f:
+        f.write('SUCCESS: main.py was executed!\n')
+    
     print("🚀 VIN Traffic Management System - MAIN.PY ENTRY")
     print("🎉 SUCCESS: Render is using our production system!")
+    print("📝 PROOF FILE CREATED: /tmp/MAIN_PY_EXECUTED")
     print(f"📂 Working Directory: {os.getcwd()}")
     print(f"🐍 Python Path: {sys.path}")
     print(f"📁 Files in directory: {os.listdir('.')}")
+    
+    # Keep app running with a simple loop
+    import time
+    print("🔄 Starting application loop...")
+    while True:
+        print("⏰ App is running... (main.py control)")
+        time.sleep(30)
     
     try:
         print("⚡ Importing production launcher...")
