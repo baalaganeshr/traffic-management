@@ -308,7 +308,7 @@ def render_vehicle_analytics():
     
     st.plotly_chart(fig, use_container_width=True)
 
-def render_ai_control_panel():
+def render_ai_control_panel(ns_state, ew_state, ns_vehicles, ew_vehicles, ns_timer, ew_timer):
     """Render AI control panel matching mobile screenshot"""
     
     # Ensure session state is initialized
@@ -345,11 +345,11 @@ def render_ai_control_panel():
     with col2:
         timer_color = '#4ade80' if ns_state == 'green' else '#ef4444' if ns_state == 'red' else '#fbbf24'
         st.markdown(f"""
-        <div style="text-align: center; padding: 0.5rem; background: rgba(30, 41, 59, 0.5); border-radius: 8px;">
-            <div style="color: {timer_color}; font-size: 1.2rem; font-weight: 700;">
+        <div style="text-align: center; padding: 0.75rem; background: rgba(30, 41, 59, 0.6); border-radius: 8px; border: 1px solid #475569;">
+            <div style="color: {timer_color}; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">
                 {ns_timer if ns_timer != 'STOP' else '⏹️'}
             </div>
-            <div style="color: #94a3b8; font-size: 0.8rem;">
+            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
                 {ns_state.title()}
             </div>
         </div>
@@ -371,11 +371,11 @@ def render_ai_control_panel():
     with col2:
         timer_color = '#4ade80' if ew_state == 'green' else '#ef4444' if ew_state == 'red' else '#fbbf24'
         st.markdown(f"""
-        <div style="text-align: center; padding: 0.5rem; background: rgba(30, 41, 59, 0.5); border-radius: 8px;">
-            <div style="color: {timer_color}; font-size: 1.2rem; font-weight: 700;">
+        <div style="text-align: center; padding: 0.75rem; background: rgba(30, 41, 59, 0.6); border-radius: 8px; border: 1px solid #475569;">
+            <div style="color: {timer_color}; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">
                 {ew_timer if ew_timer != 'STOP' else '⏹️'}
             </div>
-            <div style="color: #94a3b8; font-size: 0.8rem;">
+            <div style="color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">
                 {ew_state.title()}
             </div>
         </div>
@@ -515,20 +515,20 @@ def render_modern_dashboard():
         green_class = "light green" if ns_state == "green" else "light green off"
         
         st.markdown(f"""
-        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
+        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box;">
+            <div style="flex-shrink: 0;">
                 <h4 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.1rem;">Lane N/S</h4>
                 <p style="color: #94a3b8; margin: 0 0 1rem 0; font-size: 0.9rem;">{ns_vehicles} vehicles waiting</p>
             </div>
-            <div style="margin: 1rem 0;">
-                <div style="display: flex; flex-direction: column; align-items: center; background: linear-gradient(145deg, #4a5568, #2d3748); border-radius: 15px; padding: 12px; width: 45px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                <div style="display: flex; flex-direction: column; align-items: center; background: linear-gradient(145deg, #4a5568, #2d3748); border-radius: 15px; padding: 12px; width: 45px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
                     <div class="{red_class}" style="width: 24px; height: 24px; border-radius: 50%; margin: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
                     <div class="{yellow_class}" style="width: 24px; height: 24px; border-radius: 50%; margin: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
                     <div class="{green_class}" style="width: 24px; height: 24px; border-radius: 50%; margin: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
                 </div>
             </div>
-            <div>
-                <p style="color: {'#4ade80' if ns_state == 'green' else '#ef4444' if ns_state == 'red' else '#fbbf24'}; font-size: 1.4rem; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            <div style="flex-shrink: 0; padding: 0.5rem 0;">
+                <p style="color: {'#4ade80' if ns_state == 'green' else '#ef4444' if ns_state == 'red' else '#fbbf24'}; font-size: 1.4rem; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 1.2;">
                     {ns_timer if ns_state != 'red' else 'STOP'}
                 </p>
             </div>
@@ -542,20 +542,20 @@ def render_modern_dashboard():
         green_class = "light green" if ew_state == "green" else "light green off"
         
         st.markdown(f"""
-        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
+        <div style="text-align: center; padding: 1.5rem; background: rgba(30, 41, 59, 0.8); border-radius: 12px; margin-bottom: 1rem; border: 1px solid #475569; height: 280px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; box-sizing: border-box;">
+            <div style="flex-shrink: 0;">
                 <h4 style="color: white; margin: 0 0 0.5rem 0; font-size: 1.1rem;">Lane E/W</h4>
                 <p style="color: #94a3b8; margin: 0 0 1rem 0; font-size: 0.9rem;">{ew_vehicles} vehicles waiting</p>
             </div>
-            <div style="margin: 1rem 0;">
-                <div style="display: flex; flex-direction: column; align-items: center; background: linear-gradient(145deg, #4a5568, #2d3748); border-radius: 15px; padding: 12px; width: 45px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                <div style="display: flex; flex-direction: column; align-items: center; background: linear-gradient(145deg, #4a5568, #2d3748); border-radius: 15px; padding: 12px; width: 45px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
                     <div class="{red_class}" style="width: 24px; height: 24px; border-radius: 50%; margin: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
                     <div class="{yellow_class}" style="width: 24px; height: 24px; border-radius: 50%; margin: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
                     <div class="{green_class}" style="width: 24px; height: 24px; border-radius: 50%; margin: 3px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
                 </div>
             </div>
-            <div>
-                <p style="color: {'#4ade80' if ew_state == 'green' else '#ef4444' if ew_state == 'red' else '#fbbf24'}; font-size: 1.4rem; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            <div style="flex-shrink: 0; padding: 0.5rem 0;">
+                <p style="color: {'#4ade80' if ew_state == 'green' else '#ef4444' if ew_state == 'red' else '#fbbf24'}; font-size: 1.4rem; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 1.2;">
                     {ew_timer if ew_state != 'red' else 'STOP'}
                 </p>
             </div>
@@ -591,7 +591,7 @@ def render_modern_dashboard():
     </div>
     """, unsafe_allow_html=True)
     
-    render_ai_control_panel()
+    render_ai_control_panel(ns_state, ew_state, ns_vehicles, ew_vehicles, ns_timer, ew_timer)
     
     st.markdown("---")
     
@@ -716,10 +716,23 @@ def main():
     # Main Dashboard Cards Layout
     render_modern_dashboard()
 
-    # Auto-refresh indicator
+    # Auto-refresh indicator with more detailed status
+    auto_refresh_enabled = st.session_state.get('auto_refresh_enabled', True)
+    current_time = time.time()
+    last_update = st.session_state.get('last_update', current_time)
+    seconds_since_update = int(current_time - last_update)
+    next_refresh_in = max(0, 30 - seconds_since_update)
+    
+    status_text = f"🟢 LIVE - Next refresh in {next_refresh_in}s" if auto_refresh_enabled else "🔴 PAUSED - Auto-refresh disabled"
+    
     st.markdown(f"""
-    <div style="text-align: center; padding: 1rem; margin-top: 2rem; color: #64748b; font-size: 0.9rem;">
-        🔄 Auto-refreshing every 30 seconds | Last update: {datetime.now().strftime("%H:%M:%S")} | Cycle: {st.session_state.current_cycle}
+    <div style="text-align: center; padding: 1rem; margin-top: 2rem; background: rgba(30, 41, 59, 0.3); border-radius: 8px; border: 1px solid #475569;">
+        <div style="color: {'#4ade80' if auto_refresh_enabled else '#ef4444'}; font-weight: 600; margin-bottom: 0.5rem;">
+            {status_text}
+        </div>
+        <div style="color: #64748b; font-size: 0.9rem;">
+            Last update: {datetime.now().strftime("%H:%M:%S")} | Cycle: {st.session_state.current_cycle} | Mode: {'AI' if not st.session_state.get('manual_override_status', False) else 'Manual'}
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
