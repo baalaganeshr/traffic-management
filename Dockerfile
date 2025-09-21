@@ -20,8 +20,8 @@ RUN pip install --upgrade pip && \
 # Copy the entire application
 COPY . .
 
-# Expose the dynamic port (Render assigns $PORT, defaults to 8501 locally)
-EXPOSE $PORT
+# Expose port 8501 (Streamlit default, actual runtime port handled by start script)
+EXPOSE 8501
 
 # Set environment variables for Streamlit
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
