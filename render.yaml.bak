@@ -1,0 +1,38 @@
+# Render Blueprint - Infrastructure as Code
+# NUCLEAR: Force native Python runtime, no Docker, no auto-detection
+
+services:
+  - name: traffic-management
+    type: web
+    runtime: python
+    plan: free
+    region: oregon
+    
+    # Native Python build - NO Docker with diagnostics
+    buildCommand: |
+      echo "🚀 RENDER BLUEPRINT BUILD STARTING"
+      echo "📂 Build directory contents:"
+      ls -la || dir
+      echo "📋 Requirements:"
+      cat requirements.txt
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      echo "✅ RENDER BLUEPRINT BUILD COMPLETE"
+    
+    # EXPLICIT: Force our streamlit entry point
+    startCommand: |
+      echo "🎯 RENDER BLUEPRINT STARTING Kerala Demo"
+      python run.py
+    
+    # Environment variables for production
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: VIN_PRODUCTION_MODE  
+        value: "true"
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: PORT
+        value: "10000"
+      - key: PYTHONPATH
+        value: "/opt/render/project/src"
