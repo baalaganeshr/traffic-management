@@ -4,9 +4,18 @@ Kerala Traffic Demo - Simple demonstration interface
 IMPORTANT: This is a demo file. For production deployment, use 'python app.py'
 """
 
-# Production deployment check
+# EMERGENCY DIAGNOSTIC - Check if this demo file is being executed by Render
 import os
 import sys
+print("\n" + "="*60)
+print("🚨 DEMO FILE EXECUTED BY RENDER - THIS IS WRONG!")
+print("="*60)
+print(f"📂 Working Directory: {os.getcwd()}")
+print(f"🔍 This is demo/app_simple_kerala.py")
+print(f"⚠️  Render should NOT execute demo files!")
+print("="*60 + "\n")
+
+# Production deployment check
 
 # Check if we're being run directly (not through our production launcher)
 if __name__ == "__main__" and not os.environ.get('VIN_PRODUCTION_MODE'):
