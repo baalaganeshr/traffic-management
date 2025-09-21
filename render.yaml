@@ -1,5 +1,5 @@
 # Render Blueprint - Infrastructure as Code
-# This is the official way to override Render's auto-detection
+# FORCE: Disable all auto-detection and use our production system
 
 services:
   - name: traffic-management
@@ -8,11 +8,14 @@ services:
     plan: free
     region: oregon
     
-    # Build configuration
+    # Build configuration - install dependencies without streamlit
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     
-    # CRITICAL: This overrides auto-detection
-    startCommand: python start.py
+    # FORCE: Explicit start command - NO AUTO-DETECTION
+    startCommand: python main.py
+    
+    # Disable auto-detection features
+    autoDeploy: false
     
     # Environment variables
     envVars:
@@ -22,3 +25,5 @@ services:
         value: "true"
       - key: PYTHON_VERSION
         value: "3.11"
+      - key: DISABLE_STREAMLIT_AUTO_DETECTION
+        value: "true"

@@ -16,6 +16,15 @@ def main():
     print(f"🐍 Python Path: {sys.path}")
     print(f"📁 Files in directory: {os.listdir('.')}")
     
+    # Install Streamlit dynamically to prevent Render auto-detection
+    try:
+        print("🔧 Installing Streamlit dynamically...")
+        import subprocess
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'streamlit>=1.46.0'])
+        print("✅ Streamlit installed successfully")
+    except Exception as e:
+        print(f"⚠️ Streamlit installation warning: {e}")
+    
     try:
         print("⚡ Importing production launcher...")
         from app import main as app_main
