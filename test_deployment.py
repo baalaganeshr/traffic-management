@@ -45,10 +45,10 @@ def test_entry_points():
     print("\n🚪 Testing entry points...")
     
     entry_points = [
-        "start.py",
+        "legacy_start.py",
         "main.py", 
         "app.py",
-        "frontend/app_unified_improved.py"
+        "frontend/streamlit_app.py"
     ]
     
     for entry in entry_points:

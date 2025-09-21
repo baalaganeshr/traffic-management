@@ -190,8 +190,8 @@ class DeploymentValidator:
             "app.py", 
             "health_check.py",
             "requirements.txt",
-            "frontend/app_unified_improved.py",
-            "demo/app_simple_kerala.py"
+            "frontend/streamlit_app.py",
+            "demo/kerala_demo.py"
         ]
         
         missing_files = []

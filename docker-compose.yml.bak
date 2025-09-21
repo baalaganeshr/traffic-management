@@ -3,7 +3,7 @@ services:
     build: .
     container_name: vin-dashboard
     command: >-
-      streamlit run frontend/app_unified_improved.py
+      streamlit run frontend/streamlit_app.py
       --server.port=8501
       --server.address=0.0.0.0
       --server.headless=true
