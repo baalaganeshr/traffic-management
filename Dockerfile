@@ -23,11 +23,14 @@ COPY . .
 # Expose port 8501 (Render will use $PORT at runtime, but Docker needs a default)
 EXPOSE 8501
 
+# Make start script executable
+RUN chmod +x start.sh
+
 # Set environment variables for Streamlit
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 ENV STREAMLIT_SERVER_HEADLESS=true
 ENV STREAMLIT_SERVER_ENABLE_CORS=false
 ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
 
-# Run the professional dashboard with direct streamlit command (shell form)
-CMD streamlit run frontend/app_unified_improved.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false
+# Use our enhanced start script that handles port correctly
+CMD ["./start.sh"]
