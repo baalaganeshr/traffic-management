@@ -30,8 +30,8 @@ RUN pip install --upgrade pip && \
 # Copy the entire application
 COPY . .
 
-# Expose port (will be set by $PORT environment variable)
-EXPOSE $PORT
+# Expose port 8501 (default Streamlit port, will use $PORT at runtime)
+EXPOSE 8501
 
 # Set environment variables for Streamlit
 ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
