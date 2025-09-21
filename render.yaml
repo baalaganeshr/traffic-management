@@ -1,19 +1,24 @@
-# Render deployment configuration
-# This file forces Render to use our production launcher
+# Render Blueprint - Infrastructure as Code
+# This is the official way to override Render's auto-detection
 
-# Build settings
-build:
-  commands:
-    - pip install --upgrade pip
-    - pip install -r requirements.txt
-
-# Start command - override auto-detection
-start:
-  command: python start.py
-
-# Environment detection
-environment:
-  - name: RENDER
-    value: "true"
-  - name: PYTHON_VERSION
-    value: "3.11"
+services:
+  - name: traffic-management
+    type: web
+    runtime: python
+    plan: free
+    region: oregon
+    
+    # Build configuration
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    
+    # CRITICAL: This overrides auto-detection
+    startCommand: python start.py
+    
+    # Environment variables
+    envVars:
+      - key: RENDER
+        value: "true"
+      - key: VIN_PRODUCTION_MODE  
+        value: "true"
+      - key: PYTHON_VERSION
+        value: "3.11"

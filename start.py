@@ -1,69 +1,65 @@
 #!/usr/bin/env python3
 """
-UrbanFlow360 Production Starter
-================================
-This script ensures the application starts correctly in any environment.
-It's designed to be the definitive entry point for all deployment platforms.
+UrbanFlow360 - Official Render Entry Point
+==========================================
+This is the definitive startup script for Render deployment.
+Render Blueprint (render.yaml) specifies this as the startCommand.
 """
 
 import os
 import sys
-import subprocess
 
-def start_application():
-    """Start the UrbanFlow360 application with proper configuration"""
+def main():
+    """Official entry point for Render deployment"""
     
-    print("🚀 UrbanFlow360 Production Starter")
-    print("=" * 50)
+    print("🚀 VIN Traffic Management System v2.0.0")
+    print("🏷️  OFFICIAL RENDER DEPLOYMENT")
+    print("=" * 60)
     
-    # Set production mode flag
+    # Set production environment flags
     os.environ['VIN_PRODUCTION_MODE'] = 'true'
+    os.environ['RENDER_DEPLOYMENT'] = 'true'
     
-    # Detect environment
-    environment = "Unknown"
-    if os.environ.get('RENDER'):
-        environment = "Render"
-    elif os.environ.get('RAILWAY_ENVIRONMENT'):
-        environment = "Railway"  
-    elif os.environ.get('DYNO'):
-        environment = "Heroku"
-    elif os.environ.get('PORT'):
-        environment = "Cloud Platform"
-    else:
-        environment = "Local/Docker"
+    # Log environment details
+    print(f"🌍 Platform: Render Web Service")  
+    print(f"🔌 Port: {os.environ.get('PORT', '10000')}")
+    print(f"📁 Working Directory: {os.getcwd()}")
+    print(f"🐍 Python Version: {sys.version}")
     
-    print(f"🌍 Environment: {environment}")
-    
-    # Get port
-    port = os.environ.get('PORT', '8501')
-    print(f"🔌 Port: {port}")
-    
-    # Try to use our production launcher first
+    # Use our production application launcher
     try:
-        print("✅ Starting production launcher...")
-        from app import main
-        main()
+        print("✅ Loading production application launcher...")
+        from app import main as app_main
+        print("🚀 Starting VIN Traffic Management System...")
+        app_main()
+        
     except ImportError as e:
         print(f"⚠️  Production launcher not available: {e}")
-        print("🔄 Falling back to direct Streamlit execution")
+        print("� Using direct Streamlit startup...")
         
-        # Fallback to direct Streamlit
+        # Direct Streamlit execution as fallback
+        import subprocess
+        port = os.environ.get('PORT', '10000')
+        
         cmd = [
-            sys.executable, "-m", "streamlit", "run", 
-            "frontend/app_unified_improved.py",
-            "--server.port", port,
-            "--server.address", "0.0.0.0",
-            "--server.headless", "true",
-            "--server.enableCORS", "false",
-            "--server.enableXsrfProtection", "false"
+            sys.executable, '-m', 'streamlit', 'run',
+            'frontend/app_unified_improved.py',
+            f'--server.port={port}',
+            '--server.address=0.0.0.0',
+            '--server.headless=true',
+            '--server.enableCORS=false', 
+            '--server.enableXsrfProtection=false',
+            '--browser.gatherUsageStats=false'
         ]
         
         print(f"🔧 Command: {' '.join(cmd)}")
-        subprocess.run(cmd)
+        subprocess.exec(cmd)
+        
     except Exception as e:
-        print(f"❌ Error starting application: {e}")
-        print("🆘 Critical startup failure")
+        print(f"❌ Critical startup error: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 if __name__ == "__main__":
-    start_application()
+    main()
