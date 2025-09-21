@@ -16,6 +16,29 @@ def main():
     print(f"📂 Working Directory: {os.getcwd()}")
     print(f"📁 Files in directory: {os.listdir('.')}")
     
+    # 🔥 NUCLEAR: Restore hidden app files to prevent auto-detection
+    print("⚡ Restoring application files from hidden directory...")
+    import shutil
+    
+    try:
+        if os.path.exists('_app_hidden/frontend') and not os.path.exists('frontend'):
+            shutil.move('_app_hidden/frontend', 'frontend')
+            print("✅ Restored frontend directory")
+            
+        if os.path.exists('_app_hidden/demo') and not os.path.exists('demo'):
+            shutil.move('_app_hidden/demo', 'demo') 
+            print("✅ Restored demo directory")
+            
+        # Cleanup hidden directory
+        if os.path.exists('_app_hidden'):
+            os.rmdir('_app_hidden')
+            print("✅ Cleaned up hidden directory")
+            
+    except Exception as e:
+        print(f"⚠️ Warning: Could not restore files: {e}")
+    
+    print(f"📁 Files after restoration: {os.listdir('.')}")
+    
     try:
         print("⚡ Importing production launcher...")
         from app import main as app_main
@@ -31,6 +54,11 @@ def main():
         import subprocess
         port = os.environ.get('PORT', '8501')
         
+        # Ensure files are restored before running
+        if not os.path.exists('frontend/streamlit_app.py'):
+            print("🆘 App files not found - cannot run fallback")
+            sys.exit(1)
+            
         cmd = [
             sys.executable, '-m', 'streamlit', 'run',
             'frontend/streamlit_app.py',
