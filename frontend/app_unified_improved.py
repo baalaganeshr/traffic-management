@@ -4,7 +4,37 @@ UrbanFlow360 - Improved Professional Dashboard
 This Streamlit app focuses on a clean, responsive Professional dashboard
 with tabs for Monitor, Analytics, Map and Data. It reuses the project's
 simulation + prediction utilities while providing a polished UX.
+
+IMPORTANT: For production deployment, use 'python app.py' instead of running this file directly.
+This ensures proper configuration, error handling, and environment detection.
 """
+
+# Production deployment check - redirect to proper launcher if needed
+import os
+import sys
+
+# Check if we're being run directly (not through our production launcher)
+if __name__ == "__main__" and not os.environ.get('VIN_PRODUCTION_MODE'):
+    print("⚠️  WARNING: Running Streamlit app directly")
+    print("🚀 For production deployment, use: python app.py")
+    print("🔧 This ensures proper configuration and error handling")
+    
+    # Set flag to prevent infinite recursion
+    os.environ['VIN_PRODUCTION_MODE'] = 'true'
+    
+    # Try to import and use our production launcher
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from app import main
+        print("✅ Redirecting to production launcher...")
+        main()
+        sys.exit(0)
+    except ImportError:
+        print("⚠️  Production launcher not available, falling back to direct mode")
+        print("🌍 Environment detection may not work correctly")
+    except Exception as e:
+        print(f"❌ Error launching production mode: {e}")
+        print("🔄 Falling back to direct Streamlit execution")
 
 from datetime import datetime
 import time

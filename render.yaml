@@ -1,0 +1,19 @@
+# Render deployment configuration
+# This file forces Render to use our production launcher
+
+# Build settings
+build:
+  commands:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+
+# Start command - override auto-detection
+start:
+  command: python start.py
+
+# Environment detection
+environment:
+  - name: RENDER
+    value: "true"
+  - name: PYTHON_VERSION
+    value: "3.11"

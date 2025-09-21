@@ -1,3 +1,30 @@
+"""
+Kerala Traffic Demo - Simple demonstration interface
+
+IMPORTANT: This is a demo file. For production deployment, use 'python app.py'
+"""
+
+# Production deployment check
+import os
+import sys
+
+# Check if we're being run directly (not through our production launcher)
+if __name__ == "__main__" and not os.environ.get('VIN_PRODUCTION_MODE'):
+    print("⚠️  WARNING: This is a demo file, not for production")
+    print("🚀 For production deployment, use: python app.py")
+    print("🔧 This will launch the full production application")
+    
+    # Redirect to production if available
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        from app import main
+        print("✅ Redirecting to production application...")
+        main()
+        sys.exit(0)
+    except ImportError:
+        print("⚠️  Production launcher not available")
+        print("🎯 Running demo in standalone mode")
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
