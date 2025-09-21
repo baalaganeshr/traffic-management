@@ -1,0 +1,38 @@
+# Use Python 3.11 slim image  
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install minimal system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt ./requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire application
+COPY . .
+
+# Make start script executable
+RUN chmod +x ./start.sh
+
+# Expose port (Docker build needs static port, runtime uses $PORT)
+EXPOSE 8501
+
+# Set environment variables for Streamlit
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+ENV STREAMLIT_SERVER_HEADLESS=true
+ENV STREAMLIT_SERVER_ENABLE_CORS=false
+ENV STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
+
+# Health check (optional but helpful for debugging)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8501}/_stcore/health || exit 1
+
+# Run the start script
+CMD ["./start.sh"]
