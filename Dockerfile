@@ -7,5 +7,5 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# FORCE: Use our main.py entry point
-CMD ["python", "main.py"]
+# FORCE: Use run.py which handles PORT environment variable
+CMD ["python", "run.py"]
